@@ -17,8 +17,11 @@ func NewAccountRoutes(e *echo.Echo, controller controller.AccountController) {
 	}))
 
 	AccountGroup.GET("/accounts", helper.RoleAuth(controller.GetAllAccounts()))
-	AccountGroup.PUT("/accounts/:id", helper.IdAuth(controller.AccountUpdate()))
+	AccountGroup.PUT("/accounts", (controller.AccountUpdate()))
+
 	AccountGroup.DELETE("/accounts/:id", helper.RoleAuth(controller.AccountDelete()))
+	AccountGroup.DELETE("/accounts", (controller.AccountDelete()))
+
 	e.POST("/accounts", controller.CreateAccount())
 	e.POST("/accounts/login", controller.AccountLogin())
 }
