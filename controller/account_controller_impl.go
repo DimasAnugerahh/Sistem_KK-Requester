@@ -22,7 +22,7 @@ func NewAccountController(us service.AccountService) *AccountControllerImpl {
 
 func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 
-	return helper.RoleAuth(func(c echo.Context) error {
+	return func(c echo.Context) error {
 		response, err := uc.AccountService.GetAllAccounts(c)
 
 		if err != nil {
@@ -35,7 +35,7 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 			"message": "success",
 			"data":    response,
 		})
-	})
+	}
 
 }
 
@@ -107,18 +107,12 @@ func (uc *AccountControllerImpl) AccountLogin() echo.HandlerFunc {
 }
 
 func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
-	return helper.IdAuth(func(c echo.Context) error {
+	return func(c echo.Context) error {
 
-		idParam := c.Param("id")
-		id, err := strconv.ParseFloat(idParam, 64)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"messege": "invalid id",
-			})
-		}
+		id := helper.IdAuth(c)
 
 		updateRequest := domain.Account{}
-		err = c.Bind(&updateRequest)
+		err := c.Bind(&updateRequest)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
@@ -132,31 +126,25 @@ func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
 			"data":    response,
 		})
 
-	})
+	}
 }
 
 func (uc *AccountControllerImpl) AccountDelete() echo.HandlerFunc {
-	return helper.RoleAuth(func(c echo.Context) error {
+	return func(c echo.Context) error {
+		var id int
 		idParam := c.Param("id")
-		id, err := strconv.Atoi(idParam)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"messege": "invalid id",
-			})
+		if idParam != "" {
+			id, _ = strconv.Atoi(idParam)
+		} else {
+			id = int(helper.IdAuth(c))
 		}
 
 		updateRequest := domain.Account{}
-		err = c.Bind(&updateRequest)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"messege": err.Error(),
-			})
-		}
 
-		_, err = uc.AccountService.AccountDelete(c, &updateRequest, id)
+		uc.AccountService.AccountDelete(c, &updateRequest, id)
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "deleted success",
 		})
-	})
+	}
 }
