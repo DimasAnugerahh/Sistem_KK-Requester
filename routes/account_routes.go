@@ -2,7 +2,6 @@ package routes
 
 import (
 	"kk-requester/controller"
-	"kk-requester/helper"
 	"os"
 
 	"github.com/labstack/echo/v4"
@@ -16,10 +15,10 @@ func NewAccountRoutes(e *echo.Echo, controller controller.AccountController) {
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	AccountGroup.GET("/accounts", helper.RoleAuth(controller.GetAllAccounts()))
+	AccountGroup.GET("/accounts", (controller.GetAllAccounts()))
 	AccountGroup.PUT("/accounts", (controller.AccountUpdate()))
 
-	AccountGroup.DELETE("/accounts/:id", helper.RoleAuth(controller.AccountDelete()))
+	AccountGroup.DELETE("/accounts/:id", (controller.AccountDelete()))
 	AccountGroup.DELETE("/accounts", (controller.AccountDelete()))
 
 	e.POST("/accounts", controller.CreateAccount())
