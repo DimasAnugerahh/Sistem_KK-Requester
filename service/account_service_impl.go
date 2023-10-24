@@ -36,6 +36,15 @@ func (service *AccountServiceImpl) GetAllAccounts(ctx echo.Context) ([]domain.Ac
 	return result, nil
 }
 
+func (service *AccountServiceImpl) GetAccounts(ctx echo.Context, id int) (*domain.Account, error) {
+	result, err := service.AccountRepository.GetAccounts(id)
+	if err != nil {
+		return nil, fmt.Errorf("ERROR CREATING Account: %s", err.Error())
+	}
+
+	return result, nil
+}
+
 func (service *AccountServiceImpl) AccountLogin(ctx echo.Context, Account *domain.Account) (*domain.Account, error) {
 	result, err := service.AccountRepository.AccountLogin(Account)
 	if err != nil {

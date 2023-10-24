@@ -44,6 +44,27 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 
 }
 
+func (uc *AccountControllerImpl) GetAccounts() echo.HandlerFunc {
+
+	return func(c echo.Context) error {
+		id, _ := helper.Authorization(c)
+
+		response, err := uc.AccountService.GetAccounts(c, int(id))
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": err,
+			})
+		}
+
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "success",
+			"data":    response,
+		})
+	}
+
+}
+
 func (uc *AccountControllerImpl) CreateAccount() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		Account := &domain.Account{}

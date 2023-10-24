@@ -16,6 +16,8 @@ func NewAccountRoutes(e *echo.Echo, controller controller.AccountController) {
 	}))
 
 	AccountGroup.GET("/accounts", (controller.GetAllAccounts()))
+	AccountGroup.GET("/accounts/me", (controller.GetAccounts()))
+
 	AccountGroup.PUT("/accounts", (controller.AccountUpdate()))
 
 	AccountGroup.DELETE("/accounts/:id", (controller.AccountDelete()))

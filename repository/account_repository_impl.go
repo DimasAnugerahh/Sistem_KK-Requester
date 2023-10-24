@@ -26,6 +26,15 @@ func (ur *AccountRepositoryImpl) GetAllAccounts() ([]domain.Account, error) {
 	return Accounts, nil
 }
 
+func (ur *AccountRepositoryImpl) GetAccounts(id int) (*domain.Account, error) {
+	var Account domain.Account
+	if err := ur.DB.Where("id=?", id).First(&Account).Error; err != nil {
+		logrus.Error("Model: find data error", err.Error())
+		return &Account, err
+	}
+	return &Account, nil
+}
+
 func (ur *AccountRepositoryImpl) CreateAccount(NewAccount *domain.Account) (*domain.Account, error) {
 	if err := ur.DB.Create(&NewAccount).Error; err != nil {
 		logrus.Error("Model: insert data error", err.Error())
