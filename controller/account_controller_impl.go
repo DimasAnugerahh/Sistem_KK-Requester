@@ -23,18 +23,23 @@ func NewAccountController(us service.AccountService) *AccountControllerImpl {
 func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		response, err := uc.AccountService.GetAllAccounts(c)
+		_, role := helper.Authorization(c)
+		if role == "admin" {
+			response, err := uc.AccountService.GetAllAccounts(c)
 
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, echo.Map{
+					"message": err,
+				})
+			}
+
+			return c.JSON(http.StatusOK, echo.Map{
+				"message": "success",
+				"data":    response,
 			})
 		}
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Unauthorized"})
 
-		return c.JSON(http.StatusOK, echo.Map{
-			"message": "success",
-			"data":    response,
-		})
 	}
 
 }
@@ -109,7 +114,7 @@ func (uc *AccountControllerImpl) AccountLogin() echo.HandlerFunc {
 func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		id := helper.IdAuth(c)
+		id, _ := helper.Authorization(c)
 
 		updateRequest := domain.Account{}
 		err := c.Bind(&updateRequest)
@@ -131,17 +136,19 @@ func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
 
 func (uc *AccountControllerImpl) AccountDelete() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var id int
-		idParam := c.Param("id")
-		if idParam != "" {
-			id, _ = strconv.Atoi(idParam)
-		} else {
-			id = int(helper.IdAuth(c))
+
+		id, role := helper.Authorization(c)
+		updateRequest := domain.Account{}
+		if role == "admin" {
+			idParam := c.Param("id")
+			id, _ := strconv.Atoi(idParam)
+			uc.AccountService.AccountDelete(c, &updateRequest, int(id))
+			return c.JSON(http.StatusOK, echo.Map{
+				"message": "deleted success",
+			})
 		}
 
-		updateRequest := domain.Account{}
-
-		uc.AccountService.AccountDelete(c, &updateRequest, id)
+		uc.AccountService.AccountDelete(c, &updateRequest, int(id))
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "deleted success",
