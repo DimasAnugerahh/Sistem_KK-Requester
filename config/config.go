@@ -33,5 +33,14 @@ func InitDB() (*gorm.DB, error) {
 }
 
 func InitialMigration(DB *gorm.DB) {
-	DB.AutoMigrate(&domain.Account{})
+	DB.AutoMigrate(
+		&domain.Account{},
+		&domain.KTP{},
+		&domain.AktaKelahiran{},
+		&domain.Request{},
+		&domain.RequestDetail{},
+		&domain.SuratPindah{},
+		&domain.SuratNikah{},
+		&domain.SuratKematian{},
+	)
 }
