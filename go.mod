@@ -9,8 +9,9 @@ require (
 )
 
 require (
-// github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
-// github.com/labstack/echo-jwt v0.0.0-20221127215225-c84d41a71003 // indirect
+	github.com/creasty/defaults v1.5.1 // indirect
+	github.com/google/uuid v1.2.0 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 )
 
 require (
@@ -29,6 +30,7 @@ require (
 )
 
 require (
+	github.com/cloudinary/cloudinary-go/v2 v2.5.1
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jinzhu/inflection v1.0.0 // indirect
