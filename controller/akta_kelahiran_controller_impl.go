@@ -28,11 +28,9 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 		err := c.Bind(AktaKelahiran)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "failed bind data",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind data",
+			})
 		}
 
 		AktaKelahiran.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
@@ -40,11 +38,9 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 
 		result, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran)
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "error creating AktaKelahiran",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "error creating AktaKelahiran",
+			})
 		}
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",

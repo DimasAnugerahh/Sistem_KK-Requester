@@ -71,21 +71,17 @@ func (uc *AccountControllerImpl) CreateAccount() echo.HandlerFunc {
 		err := c.Bind(Account)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": err,
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": err,
+			})
 		}
 
 		response, err := uc.AccountService.CreateAccount(c, Account)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": err,
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": err,
+			})
 		}
 
 		return c.JSON(http.StatusOK, echo.Map{

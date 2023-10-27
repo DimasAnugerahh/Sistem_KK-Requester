@@ -27,11 +27,9 @@ func (kc *KTPControllerImpl) CreateKTP() echo.HandlerFunc {
 		err := c.Bind(ktp)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "failed bind data",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind data",
+			})
 		}
 
 		ktp.File_ktp = helper.CloudinaryUpdload(c, fileheader)
@@ -39,12 +37,11 @@ func (kc *KTPControllerImpl) CreateKTP() echo.HandlerFunc {
 
 		result, err := kc.KTPService.CreateKTP(c, ktp)
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "error creating ktp",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "error creating ktp",
+			})
 		}
+
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
 			"data":    result,

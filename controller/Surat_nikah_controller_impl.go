@@ -27,11 +27,9 @@ func (kc *SuratNikahControllerImpl) CreateSuratNikah() echo.HandlerFunc {
 		err := c.Bind(SuratNikah)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "failed bind data",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind data",
+			})
 		}
 
 		SuratNikah.File_surat_nikah = helper.CloudinaryUpdload(c, fileheader)
@@ -39,20 +37,17 @@ func (kc *SuratNikahControllerImpl) CreateSuratNikah() echo.HandlerFunc {
 
 		result, err := kc.SuratNikahService.CreateSuratNikah(c, SuratNikah)
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "error creating SuratNikah",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "error creating SuratNikah",
+			})
 		}
+
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
 			"data":    result,
 		})
 	}
-
 }
-
 func (kc *SuratNikahControllerImpl) SuratNikahUpdate() echo.HandlerFunc {
 	return func(c echo.Context) error {
 

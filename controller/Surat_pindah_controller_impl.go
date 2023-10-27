@@ -27,11 +27,9 @@ func (kc *SuratPindahControllerImpl) CreateSuratPindah() echo.HandlerFunc {
 		err := c.Bind(SuratPindah)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "failed bind data",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind data",
+			})
 		}
 
 		SuratPindah.File_surat_pindah = helper.CloudinaryUpdload(c, fileheader)
@@ -39,18 +37,16 @@ func (kc *SuratPindahControllerImpl) CreateSuratPindah() echo.HandlerFunc {
 
 		result, err := kc.SuratPindahService.CreateSuratPindah(c, SuratPindah)
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "error creating SuratPindah",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "error creating SuratPindah",
+			})
 		}
+
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
 			"data":    result,
 		})
 	}
-
 }
 
 func (kc *SuratPindahControllerImpl) SuratPindahUpdate() echo.HandlerFunc {

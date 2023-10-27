@@ -27,11 +27,9 @@ func (kc *SuratKematianControllerImpl) CreateSuratKematian() echo.HandlerFunc {
 		err := c.Bind(SuratKematian)
 
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "failed bind data",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind data",
+			})
 		}
 
 		SuratKematian.File_Surat_Kematian = helper.CloudinaryUpdload(c, fileheader)
@@ -39,11 +37,9 @@ func (kc *SuratKematianControllerImpl) CreateSuratKematian() echo.HandlerFunc {
 
 		result, err := kc.SuratKematianService.CreateSuratKematian(c, SuratKematian)
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "error creating SuratKematian",
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "error creating SuratKematian",
+			})
 		}
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
