@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"kk-requester/model/domain"
+
 	"os"
 
 	"github.com/joho/godotenv"
@@ -35,12 +36,17 @@ func InitDB() (*gorm.DB, error) {
 func InitialMigration(DB *gorm.DB) {
 	DB.AutoMigrate(
 		&domain.Account{},
+
 		&domain.KTP{},
+
 		&domain.AktaKelahiran{},
-		&domain.Request{},
-		&domain.RequestDetail{},
+
 		&domain.SuratPindah{},
+
 		&domain.SuratNikah{},
-		&domain.SuratKematian{},
+
+		&domain.AktaKematian{},
+
+		&domain.RequestKK{},
 	)
 }
