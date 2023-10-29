@@ -15,7 +15,7 @@ func NewSuratNikahRoutes(e *echo.Echo, controller controller.SuratNikahControlle
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	SuratNikahGroup.POST("/suratnikah", (controller.CreateSuratNikah()))
+	SuratNikahGroup.POST("/requests/:id/suratnikah", (controller.CreateSuratNikah()))
 	SuratNikahGroup.GET("/suratnikah", (controller.GetSuratNikah()))
 	SuratNikahGroup.PUT("/suratnikah/:id", (controller.SuratNikahUpdate()))
 
