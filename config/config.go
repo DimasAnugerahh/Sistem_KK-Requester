@@ -48,5 +48,7 @@ func InitialMigration(DB *gorm.DB) {
 		&domain.AktaKematian{},
 
 		&domain.RequestKK{},
+
+		&domain.KK{},
 	)
 }
