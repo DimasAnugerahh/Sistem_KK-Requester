@@ -35,7 +35,21 @@ func (kc *SuratNikahControllerImpl) CreateSuratNikah() echo.HandlerFunc {
 		SuratNikah.File_surat_nikah = helper.CloudinaryUpdload(c, fileheader)
 		SuratNikah.AccountId = uint(id)
 
-		result, err := kc.SuratNikahService.CreateSuratNikah(c, SuratNikah)
+		idParam := c.Param("id")
+		idRequest, _ := strconv.Atoi(idParam)
+
+		request := &domain.ReqDetailSuratNikah{}
+		err = c.Bind(request)
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind request data",
+			})
+		}
+
+		request.Request_kk_id = idRequest
+
+		suratNikah, _, err := kc.SuratNikahService.CreateSuratNikah(c, SuratNikah, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": "error creating SuratNikah",
@@ -44,7 +58,7 @@ func (kc *SuratNikahControllerImpl) CreateSuratNikah() echo.HandlerFunc {
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    suratNikah,
 		})
 	}
 }
@@ -71,7 +85,7 @@ func (kc *SuratNikahControllerImpl) SuratNikahUpdate() echo.HandlerFunc {
 		updateRequest.File_surat_nikah = helper.CloudinaryUpdload(c, fileheader)
 
 		result, _ := kc.SuratNikahService.SuratNikahUpdate(c, &updateRequest, id, uint(accountId))
-
+		result.AccountId = uint(accountId)
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
 			"data":    result,
