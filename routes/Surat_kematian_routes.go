@@ -8,15 +8,15 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewSuratKematianRoutes(e *echo.Echo, controller controller.SuratKematianController) {
-	SuratKematianGroup := e.Group("")
+func NewAktaKematianRoutes(e *echo.Echo, controller controller.AktaKematianController) {
+	AktaKematianGroup := e.Group("")
 
-	SuratKematianGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+	AktaKematianGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	SuratKematianGroup.POST("/suratkematian", (controller.CreateSuratKematian()))
-	SuratKematianGroup.GET("/suratkematian", (controller.GetSuratKematian()))
-	SuratKematianGroup.PUT("/suratkematian/:id", (controller.SuratKematianUpdate()))
+	AktaKematianGroup.POST("/requests/:id/aktakematian", (controller.CreateAktaKematian()))
+	AktaKematianGroup.GET("/aktakematian", (controller.GetAktaKematian()))
+	AktaKematianGroup.PUT("/aktakematian/:id", (controller.AktaKematianUpdate()))
 
 }
