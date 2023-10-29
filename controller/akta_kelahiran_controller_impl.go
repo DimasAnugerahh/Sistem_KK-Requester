@@ -36,7 +36,21 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 		AktaKelahiran.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
 		AktaKelahiran.AccountId = uint(id)
 
-		result, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran)
+		idParam := c.Param("id")
+		idRequest, _ := strconv.Atoi(idParam)
+
+		request := &domain.ReqDetailAktaKelahiran{}
+		err = c.Bind(request)
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind request data",
+			})
+		}
+
+		request.Request_kk_id = idRequest
+
+		aktaKelahiran, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": "error creating AktaKelahiran",
@@ -44,7 +58,7 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 		}
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    aktaKelahiran,
 		})
 	}
 
@@ -63,8 +77,8 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 			log.Fatal("Gagal convert id")
 		}
 
-		updateRequest := domain.AktaKelahiran{}
-		err = c.Bind(&updateRequest)
+		updateRequest := &domain.AktaKelahiran{}
+		err = c.Bind(updateRequest)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
@@ -73,7 +87,7 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 
 		updateRequest.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
 
-		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, &updateRequest, id, uint(accountId))
+		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, updateRequest, id, uint(accountId))
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
