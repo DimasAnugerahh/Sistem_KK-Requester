@@ -18,13 +18,13 @@ func NewAktaKelahiranService(kr repository.AktaKelahiranRepository) *AktaKelahir
 	}
 }
 
-func (service *AktaKelahiranServiceImpl) CreateAktaKelahiran(ctx echo.Context, NewAktaKelahiran *domain.AktaKelahiran) (*domain.AktaKelahiran, error) {
-	result, err := service.AktaKelahiranRepository.CreateAktaKelahiran(NewAktaKelahiran)
+func (service *AktaKelahiranServiceImpl) CreateAktaKelahiran(ctx echo.Context, NewAktaKelahiran *domain.AktaKelahiran, request *domain.ReqDetailAktaKelahiran) (*domain.AktaKelahiran, *domain.ReqDetailAktaKelahiran, error) {
+	akta, req, err := service.AktaKelahiranRepository.CreateAktaKelahiran(NewAktaKelahiran, request)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR CREATING AktaKelahiran: %s", err.Error())
+		return nil, nil, fmt.Errorf("ERROR CREATING AktaKelahiran: %s", err.Error())
 	}
 
-	return result, nil
+	return akta, req, nil
 }
 
 func (service *AktaKelahiranServiceImpl) AktaKelahiranUpdate(ctx echo.Context, UpdatedAktaKelahiran *domain.AktaKelahiran, AktaKelahiranId float64, accountId uint) (*domain.AktaKelahiran, error) {
