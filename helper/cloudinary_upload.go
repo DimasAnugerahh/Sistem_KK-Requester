@@ -16,11 +16,15 @@ func CloudinaryUpdload(c echo.Context, fileheader string) string {
 		log.Fatal("Gagal akses file .env")
 	}
 	fileHeader, _ := c.FormFile(fileheader)
-	file, _ := fileHeader.Open()
-	ctx := context.Background()
-	urlCloudinary := os.Getenv("CLOUDINARY_URL")
-	cldService, _ := cloudinary.NewFromURL(urlCloudinary)
-	response, _ := cldService.Upload.Upload(ctx, file, uploader.UploadParams{Folder: "kk-requester"})
 
-	return response.SecureURL
+	if fileHeader != nil {
+		file, _ := fileHeader.Open()
+		ctx := context.Background()
+		urlCloudinary := os.Getenv("CLOUDINARY_URL")
+		cldService, _ := cloudinary.NewFromURL(urlCloudinary)
+		response, _ := cldService.Upload.Upload(ctx, file, uploader.UploadParams{Folder: "kk-requester"})
+		return response.SecureURL
+	}
+	return ""
+
 }

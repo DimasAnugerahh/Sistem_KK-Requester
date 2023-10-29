@@ -35,7 +35,22 @@ func (kc *SuratPindahControllerImpl) CreateSuratPindah() echo.HandlerFunc {
 		SuratPindah.File_surat_pindah = helper.CloudinaryUpdload(c, fileheader)
 		SuratPindah.AccountId = uint(id)
 
-		result, err := kc.SuratPindahService.CreateSuratPindah(c, SuratPindah)
+		idParam := c.Param("id")
+		idRequest, _ := strconv.Atoi(idParam)
+
+		request := &domain.ReqDetailSuratPindah{}
+		err = c.Bind(request)
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind request data",
+			})
+		}
+
+		request.Request_kk_id = idRequest
+
+		result, _, err := kc.SuratPindahService.CreateSuratPindah(c, SuratPindah, request)
+
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": "error creating SuratPindah",
@@ -72,6 +87,7 @@ func (kc *SuratPindahControllerImpl) SuratPindahUpdate() echo.HandlerFunc {
 		updateRequest.File_surat_pindah = helper.CloudinaryUpdload(c, fileheader)
 
 		result, _ := kc.SuratPindahService.SuratPindahUpdate(c, &updateRequest, id, uint(accountId))
+		result.AccountId = uint(accountId)
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
@@ -89,6 +105,7 @@ func (kc *SuratPindahControllerImpl) GetSuratPindah() echo.HandlerFunc {
 				"messege": err.Error(),
 			})
 		}
+
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
 			"data":    result,

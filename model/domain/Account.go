@@ -13,8 +13,9 @@ type Account struct {
 	Role          string          `json:"role" form:"role" validate:"required,max=5,min=4"`
 	AktaKelahiran []AktaKelahiran `gorm:"foreignKey:AccountId"`
 	KTP           []KTP           `gorm:"foreignKey:AccountId"`
-	SuratKematian []SuratKematian `gorm:"foreignKey:AccountId"`
+	AktaKematian  []AktaKematian  `gorm:"foreignKey:AccountId"`
 	SuratNikah    []SuratNikah    `gorm:"foreignKey:AccountId"`
 	SuratPindah   []SuratPindah   `gorm:"foreignKey:AccountId"`
-	Request       []Request       `gorm:"foreignKey:AccountId"`
+	RequestKK     []RequestKK     `gorm:"foreignKey:AccountId"`
+	KK            []KK            `gorm:"foreignKey:AccountId"`
 }

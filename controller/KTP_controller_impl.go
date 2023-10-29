@@ -35,7 +35,21 @@ func (kc *KTPControllerImpl) CreateKTP() echo.HandlerFunc {
 		ktp.File_ktp = helper.CloudinaryUpdload(c, fileheader)
 		ktp.AccountId = uint(id)
 
-		result, err := kc.KTPService.CreateKTP(c, ktp)
+		idParam := c.Param("id")
+		idRequest, _ := strconv.Atoi(idParam)
+
+		request := &domain.ReqDetailKtp{}
+		err = c.Bind(request)
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "failed bind request data",
+			})
+		}
+
+		request.Request_kk_id = idRequest
+
+		ktpResult, _, err := kc.KTPService.CreateKTP(c, ktp, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": "error creating ktp",
@@ -44,7 +58,7 @@ func (kc *KTPControllerImpl) CreateKTP() echo.HandlerFunc {
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    ktpResult,
 		})
 	}
 
@@ -62,8 +76,8 @@ func (kc *KTPControllerImpl) KTPUpdate() echo.HandlerFunc {
 			log.Fatal("Gagal convert id")
 		}
 
-		updateRequest := domain.KTP{}
-		err = c.Bind(&updateRequest)
+		updateRequest := &domain.KTP{}
+		err = c.Bind(updateRequest)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
@@ -72,7 +86,7 @@ func (kc *KTPControllerImpl) KTPUpdate() echo.HandlerFunc {
 
 		updateRequest.File_ktp = helper.CloudinaryUpdload(c, fileheader)
 
-		result, _ := kc.KTPService.KTPUpdate(c, &updateRequest, id, uint(accountId))
+		result, _ := kc.KTPService.KTPUpdate(c, updateRequest, id, uint(accountId))
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",

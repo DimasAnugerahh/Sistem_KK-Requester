@@ -15,8 +15,7 @@ func NewAktaKelahiranRoutes(e *echo.Echo, controller controller.AktaKelahiranCon
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	AktaKelahiranGroup.POST("/aktekelahiran", (controller.CreateAktaKelahiran()))
+	AktaKelahiranGroup.POST("/requests/:id/aktekelahiran", (controller.CreateAktaKelahiran()))
 	AktaKelahiranGroup.GET("/aktekelahiran", (controller.GetAktaKelahiran()))
 	AktaKelahiranGroup.PUT("/aktekelahiran/:id", (controller.AktaKelahiranUpdate()))
-
 }

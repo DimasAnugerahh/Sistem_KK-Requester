@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SuratKematianService interface {
-	CreateSuratKematian(ctx echo.Context, NewSuratKematian *domain.SuratKematian) (*domain.SuratKematian, error)
-	SuratKematianUpdate(ctx echo.Context, UpdatedSuratKematian *domain.SuratKematian, SuratKematianId float64, accountId uint) (*domain.SuratKematian, error)
-	GetSuratKematian(ctx echo.Context, accountId uint) ([]domain.SuratKematian, error)
+type AktaKematianService interface {
+	CreateAktaKematian(ctx echo.Context, NewAktaKematian *domain.AktaKematian, request *domain.ReqDetailAktaKematian) (*domain.AktaKematian, *domain.ReqDetailAktaKematian, error)
+	AktaKematianUpdate(ctx echo.Context, UpdatedAktaKematian *domain.AktaKematian, AktaKematianId float64, accountId uint) (*domain.AktaKematian, error)
+	GetAktaKematian(ctx echo.Context, accountId uint) ([]domain.AktaKematian, error)
 }

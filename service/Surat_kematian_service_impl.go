@@ -8,27 +8,27 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SuratKematianServiceImpl struct {
-	SuratKematianRepository repository.SuratKematianRepository
+type AktaKematianServiceImpl struct {
+	AktaKematianRepository repository.AktaKematianRepository
 }
 
-func NewSuratKematianService(kr repository.SuratKematianRepository) *SuratKematianServiceImpl {
-	return &SuratKematianServiceImpl{
-		SuratKematianRepository: kr,
+func NewAktaKematianService(kr repository.AktaKematianRepository) *AktaKematianServiceImpl {
+	return &AktaKematianServiceImpl{
+		AktaKematianRepository: kr,
 	}
 }
 
-func (service *SuratKematianServiceImpl) CreateSuratKematian(ctx echo.Context, NewSuratKematian *domain.SuratKematian) (*domain.SuratKematian, error) {
-	result, err := service.SuratKematianRepository.CreateSuratKematian(NewSuratKematian)
+func (service *AktaKematianServiceImpl) CreateAktaKematian(ctx echo.Context, NewAktaKematian *domain.AktaKematian, request *domain.ReqDetailAktaKematian) (*domain.AktaKematian, *domain.ReqDetailAktaKematian, error) {
+	aktaKematian, req, err := service.AktaKematianRepository.CreateAktaKematian(NewAktaKematian, request)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR CREATING SuratKematian: %s", err.Error())
+		return nil, nil, fmt.Errorf("ERROR CREATING AktaKematian: %s", err.Error())
 	}
 
-	return result, nil
+	return aktaKematian, req, nil
 }
 
-func (service *SuratKematianServiceImpl) SuratKematianUpdate(ctx echo.Context, UpdatedSuratKematian *domain.SuratKematian, SuratKematianId float64, accountId uint) (*domain.SuratKematian, error) {
-	result, err := service.SuratKematianRepository.SuratKematianUpdate(UpdatedSuratKematian, SuratKematianId, accountId)
+func (service *AktaKematianServiceImpl) AktaKematianUpdate(ctx echo.Context, UpdatedAktaKematian *domain.AktaKematian, AktaKematianId float64, accountId uint) (*domain.AktaKematian, error) {
+	result, err := service.AktaKematianRepository.AktaKematianUpdate(UpdatedAktaKematian, AktaKematianId, accountId)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR LOGIN: %s", err.Error())
 	}
@@ -36,8 +36,8 @@ func (service *SuratKematianServiceImpl) SuratKematianUpdate(ctx echo.Context, U
 	return result, nil
 }
 
-func (service *SuratKematianServiceImpl) GetSuratKematian(ctx echo.Context, accountId uint) ([]domain.SuratKematian, error) {
-	result, err := service.SuratKematianRepository.GetSuratKematian(accountId)
+func (service *AktaKematianServiceImpl) GetAktaKematian(ctx echo.Context, accountId uint) ([]domain.AktaKematian, error) {
+	result, err := service.AktaKematianRepository.GetAktaKematian(accountId)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR LOGIN: %s", err.Error())
 	}

@@ -11,20 +11,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SuratKematianControllerImpl struct {
-	SuratKematianService service.SuratKematianService
+type AktaKematianControllerImpl struct {
+	AktaKematianService service.AktaKematianService
 }
 
-func NewSuratKematianController(ks service.SuratKematianService) *SuratKematianControllerImpl {
-	return &SuratKematianControllerImpl{SuratKematianService: ks}
+func NewAktaKematianController(ks service.AktaKematianService) *AktaKematianControllerImpl {
+	return &AktaKematianControllerImpl{AktaKematianService: ks}
 }
 
-func (kc *SuratKematianControllerImpl) CreateSuratKematian() echo.HandlerFunc {
+func (kc *AktaKematianControllerImpl) CreateAktaKematian() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fileheader := "file_Surat_Kematian"
 		id, _ := helper.Authorization(c)
-		SuratKematian := &domain.SuratKematian{}
-		err := c.Bind(SuratKematian)
+		fileheader := "file_akta_Kematian"
+		AktaKematian := &domain.AktaKematian{}
+		err := c.Bind(AktaKematian)
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
@@ -32,13 +32,27 @@ func (kc *SuratKematianControllerImpl) CreateSuratKematian() echo.HandlerFunc {
 			})
 		}
 
-		SuratKematian.File_Surat_Kematian = helper.CloudinaryUpdload(c, fileheader)
-		SuratKematian.AccountId = uint(id)
+		AktaKematian.File_akta_Kematian = helper.CloudinaryUpdload(c, fileheader)
+		AktaKematian.AccountId = uint(id)
 
-		result, err := kc.SuratKematianService.CreateSuratKematian(c, SuratKematian)
+		idParam := c.Param("id")
+		idRequest, _ := strconv.Atoi(idParam)
+
+		request := &domain.ReqDetailAktaKematian{}
+		err = c.Bind(request)
+
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "error creating SuratKematian",
+				"message": "failed bind request data",
+			})
+		}
+
+		request.Request_kk_id = idRequest
+
+		result, _, err := kc.AktaKematianService.CreateAktaKematian(c, AktaKematian, request)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": "error creating AktaKematian",
 			})
 		}
 		return c.JSON(http.StatusCreated, echo.Map{
@@ -49,11 +63,11 @@ func (kc *SuratKematianControllerImpl) CreateSuratKematian() echo.HandlerFunc {
 
 }
 
-func (kc *SuratKematianControllerImpl) SuratKematianUpdate() echo.HandlerFunc {
+func (kc *AktaKematianControllerImpl) AktaKematianUpdate() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		accountId, _ := helper.Authorization(c)
-		fileheader := "file_Surat_Kematian"
+		fileheader := "file_akta_Kematian"
 
 		idParam := c.Param("id")
 
@@ -62,7 +76,7 @@ func (kc *SuratKematianControllerImpl) SuratKematianUpdate() echo.HandlerFunc {
 			log.Fatal("Gagal convert id")
 		}
 
-		updateRequest := domain.SuratKematian{}
+		updateRequest := domain.AktaKematian{}
 		err = c.Bind(&updateRequest)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
@@ -70,10 +84,10 @@ func (kc *SuratKematianControllerImpl) SuratKematianUpdate() echo.HandlerFunc {
 			})
 		}
 
-		updateRequest.File_Surat_Kematian = helper.CloudinaryUpdload(c, fileheader)
+		updateRequest.File_akta_Kematian = helper.CloudinaryUpdload(c, fileheader)
 
-		result, _ := kc.SuratKematianService.SuratKematianUpdate(c, &updateRequest, id, uint(accountId))
-
+		result, _ := kc.AktaKematianService.AktaKematianUpdate(c, &updateRequest, id, uint(accountId))
+		result.AccountId = uint(accountId)
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
 			"data":    result,
@@ -81,10 +95,10 @@ func (kc *SuratKematianControllerImpl) SuratKematianUpdate() echo.HandlerFunc {
 	}
 }
 
-func (kc *SuratKematianControllerImpl) GetSuratKematian() echo.HandlerFunc {
+func (kc *AktaKematianControllerImpl) GetAktaKematian() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		accountId, _ := helper.Authorization(c)
-		result, err := kc.SuratKematianService.GetSuratKematian(c, uint(accountId))
+		result, err := kc.AktaKematianService.GetAktaKematian(c, uint(accountId))
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),

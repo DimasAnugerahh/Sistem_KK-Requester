@@ -15,12 +15,17 @@ func NewSuratPindahRepository(db *gorm.DB) SuratPindahRepository {
 	return &SuratPindahRepositoryImpl{DB: db}
 }
 
-func (kr *SuratPindahRepositoryImpl) CreateSuratPindah(NewSuratPindah *domain.SuratPindah) (*domain.SuratPindah, error) {
+func (kr *SuratPindahRepositoryImpl) CreateSuratPindah(NewSuratPindah *domain.SuratPindah, request *domain.ReqDetailSuratPindah) (*domain.SuratPindah, *domain.ReqDetailSuratPindah, error) {
 	if err := kr.DB.Create(&NewSuratPindah).Error; err != nil {
 		logrus.Error("Model: insert data error", err.Error())
-		return nil, err
+		return nil, nil, err
 	}
-	return NewSuratPindah, nil
+	request.Surat_pindah_id = int(NewSuratPindah.ID)
+	if err := kr.DB.Create(&request).Error; err != nil {
+		logrus.Error("Model: insert data error", err.Error())
+		return nil, nil, err
+	}
+	return NewSuratPindah, request, nil
 }
 
 func (kr *SuratPindahRepositoryImpl) SuratPindahUpdate(UpdatedSuratPindah *domain.SuratPindah, SuratPindahId float64, accountId uint) (*domain.SuratPindah, error) {

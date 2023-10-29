@@ -57,9 +57,11 @@ func (uc *AccountControllerImpl) GetAccounts() echo.HandlerFunc {
 			})
 		}
 
+		accountResponse := web.AccountResponse{Email: response.Email, Nama: response.Name, Password: response.Password, Role: response.Role}
+
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    response,
+			"data":    accountResponse,
 		})
 	}
 
@@ -84,7 +86,7 @@ func (uc *AccountControllerImpl) CreateAccount() echo.HandlerFunc {
 			})
 		}
 
-		return c.JSON(http.StatusOK, echo.Map{
+		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
 			"data":    response,
 		})
@@ -133,19 +135,21 @@ func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
 
 		id, _ := helper.Authorization(c)
 
-		updateRequest := domain.Account{}
-		err := c.Bind(&updateRequest)
+		updateRequest := &domain.Account{}
+		err := c.Bind(updateRequest)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
 			})
 		}
 
-		response, _ := uc.AccountService.AccountUpdate(c, &updateRequest, id)
+		response, _ := uc.AccountService.AccountUpdate(c, updateRequest, id)
+
+		updateAccountResponse := web.AccountResponse{Email: response.Email, Nama: response.Name, Password: response.Password, Role: response.Role}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    response,
+			"data":    updateAccountResponse,
 		})
 
 	}
@@ -155,17 +159,17 @@ func (uc *AccountControllerImpl) AccountDelete() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		id, role := helper.Authorization(c)
-		updateRequest := domain.Account{}
+		updateRequest := &domain.Account{}
 		if role == "admin" {
 			idParam := c.Param("id")
 			id, _ := strconv.Atoi(idParam)
-			uc.AccountService.AccountDelete(c, &updateRequest, int(id))
+			uc.AccountService.AccountDelete(c, updateRequest, int(id))
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "deleted success",
 			})
 		}
 
-		uc.AccountService.AccountDelete(c, &updateRequest, int(id))
+		uc.AccountService.AccountDelete(c, updateRequest, int(id))
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "deleted success",

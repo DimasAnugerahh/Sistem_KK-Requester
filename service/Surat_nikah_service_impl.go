@@ -18,13 +18,13 @@ func NewSuratNikahService(kr repository.SuratNikahRepository) *SuratNikahService
 	}
 }
 
-func (service *SuratNikahServiceImpl) CreateSuratNikah(ctx echo.Context, NewSuratNikah *domain.SuratNikah) (*domain.SuratNikah, error) {
-	result, err := service.SuratNikahRepository.CreateSuratNikah(NewSuratNikah)
+func (service *SuratNikahServiceImpl) CreateSuratNikah(ctx echo.Context, NewSuratNikah *domain.SuratNikah, request *domain.ReqDetailSuratNikah) (*domain.SuratNikah, *domain.ReqDetailSuratNikah, error) {
+	suratNikah, req, err := service.SuratNikahRepository.CreateSuratNikah(NewSuratNikah, request)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR CREATING SuratNikah: %s", err.Error())
+		return nil, nil, fmt.Errorf("ERROR CREATING SuratNikah: %s", err.Error())
 	}
 
-	return result, nil
+	return suratNikah, req, nil
 }
 
 func (service *SuratNikahServiceImpl) SuratNikahUpdate(ctx echo.Context, UpdatedSuratNikah *domain.SuratNikah, SuratNikahId float64, accountId uint) (*domain.SuratNikah, error) {
