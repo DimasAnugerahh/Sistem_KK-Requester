@@ -39,9 +39,17 @@ func main() {
 	SuratNikahService := service.NewSuratNikahService(SuratNikahRepository)
 	SuratNikahController := controller.NewSuratNikahController(SuratNikahService)
 
-	SuratKematianRepository := repository.NewSuratKematianRepository(db)
-	SuratKematianService := service.NewSuratKematianService(SuratKematianRepository)
-	SuratKematianController := controller.NewSuratKematianController(SuratKematianService)
+	AktaKematianRepository := repository.NewAktaKematianRepository(db)
+	AktaKematianService := service.NewAktaKematianService(AktaKematianRepository)
+	AktaKematianController := controller.NewAktaKematianController(AktaKematianService)
+
+	KKRequestRepository := repository.NewRequestKKRepository(db)
+	KKRequestService := service.NewRequestKKService(KKRequestRepository)
+	KKRequestController := controller.NewRequestKKController(KKRequestService)
+
+	KKRepository := repository.NewKkRepository(db)
+	KKService := service.NewKkService(KKRepository)
+	KKController := controller.NewKKController(KKService)
 
 	app.Use(middleware.LoggerWithConfig(
 		middleware.LoggerConfig{
@@ -53,8 +61,10 @@ func main() {
 	routes.NewKTPRoutes(app, KTPController)
 	routes.NewAktaKelahiranRoutes(app, AktaKelahiranController)
 	routes.NewSuratPindahRoutes(app, SuratPindahController)
-	routes.NewSuratKematianRoutes(app, SuratKematianController)
+	routes.NewAktaKematianRoutes(app, AktaKematianController)
 	routes.NewSuratNikahRoutes(app, SuratNikahController)
+	routes.NewKKRequestRoutes(app, KKRequestController)
+	routes.NewkkRoutes(app, KKController)
 
 	app.Start(":8080")
 }
