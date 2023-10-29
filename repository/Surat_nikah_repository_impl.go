@@ -15,12 +15,17 @@ func NewSuratNikahRepository(db *gorm.DB) SuratNikahRepository {
 	return &SuratNikahRepositoryImpl{DB: db}
 }
 
-func (kr *SuratNikahRepositoryImpl) CreateSuratNikah(NewSuratNikah *domain.SuratNikah) (*domain.SuratNikah, error) {
+func (kr *SuratNikahRepositoryImpl) CreateSuratNikah(NewSuratNikah *domain.SuratNikah, request *domain.ReqDetailSuratNikah) (*domain.SuratNikah, *domain.ReqDetailSuratNikah, error) {
 	if err := kr.DB.Create(&NewSuratNikah).Error; err != nil {
 		logrus.Error("Model: insert data error", err.Error())
-		return nil, err
+		return nil, nil, err
 	}
-	return NewSuratNikah, nil
+	request.Surat_nikah_id = int(NewSuratNikah.ID)
+	if err := kr.DB.Create(&request).Error; err != nil {
+		logrus.Error("Model: insert data error", err.Error())
+		return nil, nil, err
+	}
+	return NewSuratNikah, request, nil
 }
 
 func (kr *SuratNikahRepositoryImpl) SuratNikahUpdate(UpdatedSuratNikah *domain.SuratNikah, SuratNikahId float64, accountId uint) (*domain.SuratNikah, error) {

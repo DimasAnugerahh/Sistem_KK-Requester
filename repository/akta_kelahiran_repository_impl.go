@@ -15,12 +15,17 @@ func NewAktaKelahiranRepository(db *gorm.DB) AktaKelahiranRepository {
 	return &AktaKelahiranRepositoryImpl{DB: db}
 }
 
-func (kr *AktaKelahiranRepositoryImpl) CreateAktaKelahiran(NewAktaKelahiran *domain.AktaKelahiran) (*domain.AktaKelahiran, error) {
+func (kr *AktaKelahiranRepositoryImpl) CreateAktaKelahiran(NewAktaKelahiran *domain.AktaKelahiran, request *domain.ReqDetailAktaKelahiran) (*domain.AktaKelahiran, *domain.ReqDetailAktaKelahiran, error) {
 	if err := kr.DB.Create(&NewAktaKelahiran).Error; err != nil {
 		logrus.Error("Model: insert data error", err.Error())
-		return nil, err
+		return nil, nil, err
 	}
-	return NewAktaKelahiran, nil
+	request.Akta_kelahiran_id = int(NewAktaKelahiran.ID)
+	if err := kr.DB.Create(&request).Error; err != nil {
+		logrus.Error("Model: insert data error", err.Error())
+		return nil, nil, err
+	}
+	return NewAktaKelahiran, request, nil
 }
 
 func (kr *AktaKelahiranRepositoryImpl) AktaKelahiranUpdate(UpdatedAktaKelahiran *domain.AktaKelahiran, AktaKelahiranId float64, accountId uint) (*domain.AktaKelahiran, error) {

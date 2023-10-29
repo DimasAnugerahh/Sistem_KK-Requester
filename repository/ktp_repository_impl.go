@@ -15,12 +15,17 @@ func NewKTPRepository(db *gorm.DB) KTPRepository {
 	return &KTPRepositoryImpl{DB: db}
 }
 
-func (kr *KTPRepositoryImpl) CreateKTP(NewKTP *domain.KTP) (*domain.KTP, error) {
+func (kr *KTPRepositoryImpl) CreateKTP(NewKTP *domain.KTP, request *domain.ReqDetailKtp) (*domain.KTP, *domain.ReqDetailKtp, error) {
 	if err := kr.DB.Create(&NewKTP).Error; err != nil {
 		logrus.Error("Model: insert data error", err.Error())
-		return nil, err
+		return nil, nil, err
 	}
-	return NewKTP, nil
+	request.Ktp_id = int(NewKTP.ID)
+	if err := kr.DB.Create(&request).Error; err != nil {
+		logrus.Error("Model: insert data error", err.Error())
+		return nil, nil, err
+	}
+	return NewKTP, request, nil
 }
 
 func (kr *KTPRepositoryImpl) KTPUpdate(UpdatedKTP *domain.KTP, ktpId float64, accountId uint) (*domain.KTP, error) {
@@ -31,11 +36,12 @@ func (kr *KTPRepositoryImpl) KTPUpdate(UpdatedKTP *domain.KTP, ktpId float64, ac
 	return UpdatedKTP, nil
 }
 
-func (kr *KTPRepositoryImpl) GetKTP(id uint) ([]domain.KTP, error) {
+func (kr *KTPRepositoryImpl) GetKTP(idAccount uint) ([]domain.KTP, error) {
 	var KTP = []domain.KTP{}
-	if err := kr.DB.Where("account_id=?", id).Find(&KTP).Error; err != nil {
+	if err := kr.DB.Where("account_id=?", idAccount).Find(&KTP).Error; err != nil {
 		logrus.Error("Model: find data error", err.Error())
 		return KTP, err
 	}
+
 	return KTP, nil
 }
