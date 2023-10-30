@@ -6,7 +6,7 @@ import (
 	"kk-requester/repository"
 	"kk-requester/routes"
 	"kk-requester/service"
-
+	"log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -15,7 +15,7 @@ func main() {
 	app := echo.New()
 	db, err := config.InitDB()
 	if err != nil {
-		panic(err)
+		log.Fatal("gagal koneksi database: ", err)
 	}
 	config.InitialMigration(db)
 
