@@ -4,27 +4,17 @@ import (
 	"fmt"
 	"kk-requester/model/domain"
 
-	"os"
 	"log"
+	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-var (
-	DB *gorm.DB
-)
+var DB *gorm.DB
 
-func InitDB() (*gorm.DB, error) {
+func InitDB() {
 	var err error
-	_, err = os.Stat(".env")
-	if err == nil {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal("Failed to fetch .env file")
-		}
-	}
 
 	dbuser := os.Getenv("DB_USER")
 	dbpass := os.Getenv("DB_PASSWORD")
@@ -37,12 +27,16 @@ func InitDB() (*gorm.DB, error) {
 
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return DB, err
+		log.Fatal("Could not open database")
 	}
+	fmt.Println("Koneksi database berhasil")
 
-	return DB, nil
 }
 
-func InitialMigration(DB *gorm.DB) {
-	DB.AutoMigrate(&domain.Account{},&domain.KTP{},&domain.AktaKelahiran{},&domain.SuratPindah{},&domain.SuratNikah{},&domain.AktaKematian{},&domain.RequestKK{},&domain.KK{})
+func InitialMigration() {
+	err := DB.AutoMigrate(&domain.Account{}, &domain.KTP{}, &domain.AktaKelahiran{}, &domain.SuratPindah{}, &domain.SuratNikah{}, &domain.AktaKematian{}, &domain.RequestKK{}, &domain.KK{})
+	if err != nil {
+		log.Fatal("Gagal migrasi database")
+	}
+	fmt.Println("Migrasi table berhasil")
 }
