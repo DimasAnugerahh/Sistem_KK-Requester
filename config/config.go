@@ -16,7 +16,7 @@ var DB *gorm.DB
 func InitDB() {
 	var err error
 
-	dbuser := os.Getenv("DB_USER")
+	dbuser := os.Getenv("DB_USERNAME")
 	dbpass := os.Getenv("DB_PASSWORD")
 	dbhost := os.Getenv("DB_HOST")
 	dbport := os.Getenv("DB_PORT")
