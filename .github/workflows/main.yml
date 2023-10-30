@@ -37,11 +37,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker stop ${{ secrets.CONTAINER_NAME }} || true
-            docker rm ${{ secrets.CONTAINER_NAME }} || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester || true
+            docker stop ${{ secrets.CONTAINER_NAME }} 
+            docker rm ${{ secrets.CONTAINER_NAME }} 
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester 
             docker run --name ${{ secrets.CONTAINER_NAME }} -p 8080:8080 -d \
-              -v $(pwd)/uploads:/app/uploads \
               -e DB_HOST=${{secrets.DB_HOST}} \
               -e DB_PORT=${{secrets.DB_PORT}} \
               -e DB_NAME=${{secrets.DB_NAME}} \
