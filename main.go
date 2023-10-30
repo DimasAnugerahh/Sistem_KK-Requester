@@ -22,10 +22,8 @@ func main() {
 		}
 	}
 	app := echo.New()
-	db, err := config.InitDB()
-	if err != nil {
-		log.Fatal("gagal koneksi database: ", err)
-	}
+	db, _ := config.InitDB()
+	
 	config.InitialMigration(db)
 
 	AccountRepository := repository.NewAccountRepository(db)
