@@ -17,7 +17,8 @@ var (
 )
 
 func InitDB() (*gorm.DB, error) {
-	_, err := os.Stat(".env")
+	var err error
+	_, err = os.Stat(".env")
 	if err == nil {
 		err := godotenv.Load()
 		if err != nil {
@@ -34,12 +35,12 @@ func InitDB() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		dbuser, dbpass, dbhost, dbport, dbname)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return db, err
+		return DB, err
 	}
 
-	return db, nil
+	return DB, nil
 }
 
 func InitialMigration(DB *gorm.DB) {
