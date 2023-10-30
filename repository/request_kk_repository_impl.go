@@ -38,6 +38,16 @@ func (kr *RequestKKRepositoryImpl) GetRequestKK(page int, limit int, sortby stri
 	return RequestKK, nil
 }
 
+func (kr *RequestKKRepositoryImpl) GetuserRequestKK(page int, limit int, sortby string, order string, accountId uint) ([]domain.RequestKK, error) {
+	var RequestKK = []domain.RequestKK{}
+	offset := (page - 1) * limit
+	if err := kr.DB.Where("account_id=?", accountId).Preload("Ktp").Preload("AktaKelahiran").Preload("AktaKematian").Preload("SuratNikah").Preload("SuratPindah").Limit(limit).Offset(offset).Order(sortby + " " + order).Find(&RequestKK).Error; err != nil {
+		logrus.Error("Model: find data error", err.Error())
+		return RequestKK, err
+	}
+	return RequestKK, nil
+}
+
 func (kr *RequestKKRepositoryImpl) RequestKKUpdate(UpdatedRequestKK *domain.RequestKK, RequestKKId float64) (*domain.RequestKK, error) {
 	if err := kr.DB.Model(&domain.RequestKK{}).Where("id=?", RequestKKId).Updates(domain.RequestKK{StatusRequest: UpdatedRequestKK.StatusRequest, StatusRequestMessage: UpdatedRequestKK.StatusRequestMessage}).Error; err != nil {
 		logrus.Error("Model: update data error", err.Error())

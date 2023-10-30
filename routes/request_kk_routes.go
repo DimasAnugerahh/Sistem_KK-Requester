@@ -17,6 +17,8 @@ func NewKKRequestRoutes(e *echo.Echo, controller controller.RequestKKController)
 
 	KKRequestGroup.POST("/KKRequest", (controller.CreateRequestKK()))
 	KKRequestGroup.GET("/KKRequest", (controller.GetRequestKK()))
+	KKRequestGroup.GET("/KKRequest/me", (controller.GetUserRequestKK()))
+
 	KKRequestGroup.PUT("/KKRequest/:id", (controller.RequestKKUpdate()))
 
 }
