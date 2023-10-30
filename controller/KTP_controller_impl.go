@@ -88,7 +88,7 @@ func (kc *KTPControllerImpl) KTPUpdate() echo.HandlerFunc {
 
 		result, _ := kc.KTPService.KTPUpdate(c, updateRequest, id, uint(accountId))
 
-		return c.JSON(http.StatusCreated, echo.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
 			"data":    result,
 		})

@@ -88,7 +88,7 @@ func (kc *AktaKematianControllerImpl) AktaKematianUpdate() echo.HandlerFunc {
 
 		result, _ := kc.AktaKematianService.AktaKematianUpdate(c, &updateRequest, id, uint(accountId))
 		result.AccountId = uint(accountId)
-		return c.JSON(http.StatusCreated, echo.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
 			"data":    result,
 		})

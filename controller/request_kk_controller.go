@@ -6,4 +6,5 @@ type RequestKKController interface {
 	CreateRequestKK() echo.HandlerFunc
 	GetRequestKK() echo.HandlerFunc
 	RequestKKUpdate() echo.HandlerFunc
+	GetUserRequestKK() echo.HandlerFunc
 }

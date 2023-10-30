@@ -28,6 +28,15 @@ func (service *RequestKKServiceImpl) CreateRequestKK(ctx echo.Context, NewkkRequ
 	return result, nil
 }
 
+func (service *RequestKKServiceImpl) GetUserRequestKK(ctx echo.Context, page int, limit int, sortby string, order string, accountId uint) ([]domain.RequestKK, error) {
+	result, err := service.RequestKKRepository.GetuserRequestKK(page, limit, sortby, order, accountId)
+	if err != nil {
+		return nil, fmt.Errorf("ERROR GET USERS: %s", err.Error())
+	}
+
+	return result, nil
+}
+
 func (service *RequestKKServiceImpl) GetRequestKK(ctx echo.Context, page int, limit int, sortby string, order string) ([]domain.RequestKK, error) {
 	result, err := service.RequestKKRepository.GetRequestKK(page, limit, sortby, order)
 	if err != nil {

@@ -89,7 +89,7 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 
 		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, updateRequest, id, uint(accountId))
 
-		return c.JSON(http.StatusCreated, echo.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
 			"data":    result,
 		})

@@ -24,14 +24,8 @@ func (kc *RequestKKControllerImpl) CreateRequestKK() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := helper.Authorization(c)
 		RequestKK := &domain.RequestKK{}
-		err := c.Bind(RequestKK)
-		RequestKK.AccountId = uint(id)
 
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind req kk",
-			})
-		}
+		RequestKK.AccountId = uint(id)
 
 		result, err := kc.RequestKKService.CreateRequestKK(c, RequestKK)
 		if err != nil {
@@ -76,7 +70,7 @@ func (kc *RequestKKControllerImpl) RequestKKUpdate() echo.HandlerFunc {
 
 			result, _ := kc.RequestKKService.RequestKKUpdate(c, updateRequest, id)
 
-			return c.JSON(http.StatusCreated, echo.Map{
+			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
 				"data":    result,
 			})
@@ -131,4 +125,44 @@ func (kc *RequestKKControllerImpl) GetRequestKK() echo.HandlerFunc {
 		})
 
 	}
+}
+
+func (kc *RequestKKControllerImpl) GetUserRequestKK() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := helper.Authorization(c)
+
+		page := 1
+		limit := 10
+
+		pageParam := c.QueryParam("page")
+		SortByParam := c.QueryParam("SortBy")
+		orderParam := c.QueryParam("order")
+		limitParam := c.QueryParam("limit")
+
+		if pageParam != "" {
+			page, _ = strconv.Atoi(pageParam)
+		}
+		if limitParam != "" {
+			limit, _ = strconv.Atoi(limitParam)
+		}
+		if SortByParam == "" {
+			SortByParam = "Updated_At"
+		}
+		if orderParam == "" {
+			orderParam = "asc"
+		}
+
+		result, err := kc.RequestKKService.GetUserRequestKK(c, page, limit, SortByParam, orderParam, uint(id))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"messege": err.Error(),
+			})
+		}
+
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "success",
+			"data":    result,
+		})
+	}
+
 }
