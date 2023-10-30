@@ -7,11 +7,19 @@ import (
 	"kk-requester/routes"
 	"kk-requester/service"
 	"log"
+	"os"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
+	_, err := os.Stat(".env")
+	if err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Failed to fetch .env file")
+		}
+	}
 	app := echo.New()
 	db, err := config.InitDB()
 	if err != nil {
