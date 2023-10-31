@@ -1,113 +1,46 @@
-package controller
+package repository
 
 import (
-	"kk-requester/helper"
 	"kk-requester/model/domain"
-	"kk-requester/service"
-	"log"
-	"net/http"
-	"strconv"
 
-	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
-type AktaKelahiranControllerImpl struct {
-	AktaKelahiranService service.AktaKelahiranService
+type AktaKelahiranRepositoryImpl struct {
+	DB *gorm.DB
 }
 
-func NewAktaKelahiranController(ks service.AktaKelahiranService) *AktaKelahiranControllerImpl {
-	return &AktaKelahiranControllerImpl{AktaKelahiranService: ks}
+func NewAktaKelahiranRepository(db *gorm.DB) AktaKelahiranRepository {
+	return &AktaKelahiranRepositoryImpl{DB: db}
 }
 
-func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		id, _ := helper.Authorization(c)
-		fileheader := "file_AktaKelahiran"
-		AktaKelahiran := &domain.AktaKelahiran{}
-		err := c.Bind(AktaKelahiran)
-
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind data",
-			})
-		}
-
-		AktaKelahiran.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
-		AktaKelahiran.AccountId = uint(id)
-
-		idParam := c.Param("id")
-		idRequest, _ := strconv.Atoi(idParam)
-
-		request := &domain.ReqDetailAktaKelahiran{}
-		err = c.Bind(request)
-
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind request data",
-			})
-		}
-
-		request.Request_kk_id = idRequest
-
-		AktaKelahiranResult, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "error creating AktaKelahiran",
-			})
-		}
-
-		return c.JSON(http.StatusCreated, echo.Map{
-			"message": "success",
-			"data":    AktaKelahiranResult,
-		})
+func (kr *AktaKelahiranRepositoryImpl) CreateAktaKelahiran(NewAktaKelahiran *domain.AktaKelahiran, request *domain.ReqDetailAktaKelahiran) (*domain.AktaKelahiran, *domain.ReqDetailAktaKelahiran, error) {
+	if err := kr.DB.Create(&NewAktaKelahiran).Error; err != nil {
+		logrus.Error("Model: insert data error", err.Error())
+		return nil, nil, err
 	}
-
+	request.Akta_kelahiran_id = int(NewAktaKelahiran.ID)
+	if err := kr.DB.Create(&request).Error; err != nil {
+		logrus.Error("Model: insert data error", err.Error())
+		return nil, nil, err
+	}
+	return NewAktaKelahiran, request, nil
 }
 
-func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
-	return func(c echo.Context) error {
-
-		accountId, _ := helper.Authorization(c)
-		fileheader := "file_Akta_kelahiran"
-
-		idParam := c.Param("id")
-
-		id, err := strconv.ParseFloat(idParam, 64)
-		if err != nil {
-			log.Fatal("Gagal convert id")
-		}
-
-		updateRequest := &domain.AktaKelahiran{}
-		err = c.Bind(updateRequest)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"messege": err.Error(),
-			})
-		}
-
-		updateRequest.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
-
-		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, updateRequest, id, uint(accountId))
-
-		return c.JSON(http.StatusOK, echo.Map{
-			"message": "success",
-			"data":    result,
-		})
+func (kr *AktaKelahiranRepositoryImpl) AktaKelahiranUpdate(UpdatedAktaKelahiran *domain.AktaKelahiran, AktaKelahiranId float64, accountId uint) (*domain.AktaKelahiran, error) {
+	if err := kr.DB.Model(&domain.AktaKelahiran{}).Where("id=? and account_id=?", AktaKelahiranId, accountId).Updates(domain.AktaKelahiran{Nama_lengkap: UpdatedAktaKelahiran.Nama_lengkap, File_Akta_kelahiran: UpdatedAktaKelahiran.File_Akta_kelahiran}).Error; err != nil {
+		logrus.Error("Model: update data error", err.Error())
+		return nil, err
 	}
+	return UpdatedAktaKelahiran, nil
 }
 
-func (kc *AktaKelahiranControllerImpl) GetAktaKelahiran() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		accountId, _ := helper.Authorization(c)
-		result, err := kc.AktaKelahiranService.GetAktaKelahiran(c, uint(accountId))
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"messege": err.Error(),
-			})
-		}
-		return c.JSON(http.StatusOK, echo.Map{
-			"message": "success",
-			"data":    result,
-		})
+func (kr *AktaKelahiranRepositoryImpl) GetAktaKelahiran(id uint) ([]domain.AktaKelahiran, error) {
+	var AktaKelahiran = []domain.AktaKelahiran{}
+	if err := kr.DB.Where("account_id=?", id).Find(&AktaKelahiran).Error; err != nil {
+		logrus.Error("Model: find data error", err.Error())
+		return AktaKelahiran, err
 	}
+	return AktaKelahiran, nil
 }
