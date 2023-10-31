@@ -47,7 +47,7 @@ jobs:
               -e DB_USERNAME=${{secrets.DB_USERNAME}} \
               -e DB_PASSWORD=${{secrets.DB_PASSWORD}} \
               -e JWT_SECRET=${{secrets.JWT_SECRET}} \
-              -e smtp_pass=${{secrets.SMTP_PASS}} \
-              -e smtp_username=${{secrets.SMTP_USERNAME}} \
+              -e SMTP_PASS=${{secrets.SMTP_PASS}} \
+              -e SMTP_USERNAME=${{secrets.SMTP_USERNAME}} \
               -e CLOUDINARY_URL=${{secrets.CLOUDINARY_URL}} \
               ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester
