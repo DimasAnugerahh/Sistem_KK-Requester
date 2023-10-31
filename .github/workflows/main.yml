@@ -25,7 +25,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile
+          file: ./dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester:latest
 
@@ -37,18 +37,17 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker stop ${{ secrets.CONTAINER_NAME }} || true
-            docker rm ${{ secrets.CONTAINER_NAME }} || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester || true
-            docker run --name ${{ secrets.CONTAINER_NAME }} -p 8080:8080 -d \
-              -v $(pwd)/uploads:/app/uploads \
+            sudo docker stop ${{ secrets.CONTAINER_NAME }} 
+            sudo docker rm ${{ secrets.CONTAINER_NAME }} 
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester 
+            sudo docker run --name ${{ secrets.CONTAINER_NAME }} -p 8080:8080 -d \
               -e DB_HOST=${{secrets.DB_HOST}} \
               -e DB_PORT=${{secrets.DB_PORT}} \
               -e DB_NAME=${{secrets.DB_NAME}} \
               -e DB_USERNAME=${{secrets.DB_USERNAME}} \
               -e DB_PASSWORD=${{secrets.DB_PASSWORD}} \
               -e JWT_SECRET=${{secrets.JWT_SECRET}} \
-              -e smtp_pass=${{secrets.smtp_pass}} \
-              -e smtp_username=${{secrets.smtp_username}} \
+              -e SMTP_PASS=${{secrets.SMTP_PASS}} \
+              -e SMTP_USERNAME=${{secrets.SMTP_USERNAME}} \
               -e CLOUDINARY_URL=${{secrets.CLOUDINARY_URL}} \
               ${{ secrets.DOCKERHUB_USERNAME }}/kkrequester

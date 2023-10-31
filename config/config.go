@@ -4,51 +4,39 @@ import (
 	"fmt"
 	"kk-requester/model/domain"
 
+	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-var (
-	DB *gorm.DB
-)
+var DB *gorm.DB
 
-func InitDB() (*gorm.DB, error) {
-	godotenv.Load(".env")
+func InitDB() {
+	var err error
 
-	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"))
+	dbuser := os.Getenv("DB_USERNAME")
+	dbpass := os.Getenv("DB_PASSWORD")
+	dbhost := os.Getenv("DB_HOST")
+	dbport := os.Getenv("DB_PORT")
+	dbname := os.Getenv("DB_NAME")
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbuser, dbpass, dbhost, dbport, dbname)
+
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return db, err
+		log.Fatal("Could not open database")
 	}
+	fmt.Println("Koneksi database berhasil")
 
-	return db, nil
 }
 
-func InitialMigration(DB *gorm.DB) {
-	DB.AutoMigrate(
-		&domain.Account{},
-
-		&domain.KTP{},
-
-		&domain.AktaKelahiran{},
-
-		&domain.SuratPindah{},
-
-		&domain.SuratNikah{},
-
-		&domain.AktaKematian{},
-
-		&domain.RequestKK{},
-
-		&domain.KK{},
-	)
+func InitialMigration() {
+	err := DB.AutoMigrate(&domain.Account{}, &domain.KTP{}, &domain.AktaKelahiran{}, &domain.SuratPindah{}, &domain.SuratNikah{}, &domain.AktaKematian{}, &domain.RequestKK{}, &domain.KK{})
+	if err != nil {
+		log.Fatal("Gagal migrasi database")
+	}
+	fmt.Println("Migrasi table berhasil")
 }

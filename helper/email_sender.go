@@ -9,8 +9,12 @@ import (
 )
 
 func EmailSender(email_tujuan string, link_gambar string) {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Gagal akses file .env")
+	_, err := os.Stat(".env")
+	if err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Failed to fetch .env file")
+		}
 	}
 
 	m := gomail.NewMessage()
@@ -28,7 +32,7 @@ func EmailSender(email_tujuan string, link_gambar string) {
 		</html>`
 	m.SetBody("text/html", htmlContent)
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, os.Getenv("smtp_username"), os.Getenv("smtp_pass"))
+	d := gomail.NewDialer("smtp.gmail.com", 587, os.Getenv("SMTP_USERNAME"), os.Getenv("SMTP_PASS"))
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {

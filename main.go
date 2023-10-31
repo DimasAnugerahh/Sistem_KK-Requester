@@ -6,48 +6,58 @@ import (
 	"kk-requester/repository"
 	"kk-requester/routes"
 	"kk-requester/service"
+	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	app := echo.New()
-	db, err := config.InitDB()
-	if err != nil {
-		panic(err)
-	}
-	config.InitialMigration(db)
 
-	AccountRepository := repository.NewAccountRepository(db)
+	_, err := os.Stat(".env")
+	if err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Failed to fetch .env file")
+		}
+	}
+	app := echo.New()
+
+	config.InitDB()
+
+	config.InitialMigration()
+
+	AccountRepository := repository.NewAccountRepository(config.DB)
 	AccountService := service.NewAccountService(AccountRepository)
 	AccountController := controller.NewAccountController(AccountService)
 
-	KTPRepository := repository.NewKTPRepository(db)
+	KTPRepository := repository.NewKTPRepository(config.DB)
 	KTPService := service.NewKTPService(KTPRepository)
 	KTPController := controller.NewKTPController(KTPService)
 
-	AktaKelahiranRepository := repository.NewAktaKelahiranRepository(db)
+	AktaKelahiranRepository := repository.NewAktaKelahiranRepository(config.DB)
 	AktaKelahiranService := service.NewAktaKelahiranService(AktaKelahiranRepository)
 	AktaKelahiranController := controller.NewAktaKelahiranController(AktaKelahiranService)
 
-	SuratPindahRepository := repository.NewSuratPindahRepository(db)
+	SuratPindahRepository := repository.NewSuratPindahRepository(config.DB)
 	SuratPindahService := service.NewSuratPindahService(SuratPindahRepository)
 	SuratPindahController := controller.NewSuratPindahController(SuratPindahService)
 
-	SuratNikahRepository := repository.NewSuratNikahRepository(db)
+	SuratNikahRepository := repository.NewSuratNikahRepository(config.DB)
 	SuratNikahService := service.NewSuratNikahService(SuratNikahRepository)
 	SuratNikahController := controller.NewSuratNikahController(SuratNikahService)
 
-	AktaKematianRepository := repository.NewAktaKematianRepository(db)
+	AktaKematianRepository := repository.NewAktaKematianRepository(config.DB)
 	AktaKematianService := service.NewAktaKematianService(AktaKematianRepository)
 	AktaKematianController := controller.NewAktaKematianController(AktaKematianService)
 
-	KKRequestRepository := repository.NewRequestKKRepository(db)
+	KKRequestRepository := repository.NewRequestKKRepository(config.DB)
 	KKRequestService := service.NewRequestKKService(KKRequestRepository)
 	KKRequestController := controller.NewRequestKKController(KKRequestService)
 
-	KKRepository := repository.NewKkRepository(db)
+	KKRepository := repository.NewKkRepository(config.DB)
 	KKService := service.NewKkService(KKRepository)
 	KKController := controller.NewKKController(KKService)
 
