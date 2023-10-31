@@ -52,7 +52,7 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 		AktaKelahiranResult, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "error creating AktaKelahiran",
+				"message":err.Error(),
 			})
 		}
 
