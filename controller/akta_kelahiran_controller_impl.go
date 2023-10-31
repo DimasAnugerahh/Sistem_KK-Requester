@@ -22,7 +22,7 @@ func NewAktaKelahiranController(ks service.AktaKelahiranService) *AktaKelahiranC
 func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := helper.Authorization(c)
-		fileheader := "file_AktaKelahiran"
+		fileheader := "file_Akta_kelahiran"
 		AktaKelahiran := &domain.AktaKelahiran{}
 		err := c.Bind(AktaKelahiran)
 
