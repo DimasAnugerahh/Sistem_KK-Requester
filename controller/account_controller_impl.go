@@ -27,6 +27,12 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 		if role == "admin" {
 			response, err := uc.AccountService.GetAllAccounts(c)
 
+			if response == nil {
+				return c.JSON(http.StatusOK, echo.Map{
+					"message": "there is no account",
+				})
+			}
+
 			if err != nil {
 				return c.JSON(http.StatusBadRequest, echo.Map{
 					"message": err,
@@ -106,12 +112,16 @@ func (uc *AccountControllerImpl) AccountLogin() echo.HandlerFunc {
 		}
 
 		response, err := uc.AccountService.AccountLogin(c, Account)
+		if response == nil {
+			return c.JSON(http.StatusUnauthorized, echo.Map{
+				"message": "account not found",
+			})
+		}
+
 		if err != nil {
-			if err != nil {
-				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": err,
-				})
-			}
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"message": err,
+			})
 		}
 
 		token, err := helper.GenerateToken(Account, int(response.ID), response.Role, response.Email)
