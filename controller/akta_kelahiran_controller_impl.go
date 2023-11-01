@@ -107,7 +107,7 @@ func (kc *AktaKelahiranControllerImpl) GetAktaKelahiran() echo.HandlerFunc {
 		result, err := kc.AktaKelahiranService.GetAktaKelahiran(c, uint(accountId))
 
 		if len(result) == 0 {
-			return c.JSON(http.StatusBadRequest, map[string]any{
+			return c.JSON(http.StatusOK, map[string]any{
 				"messege": "there is no akta kelahiran",
 			})
 		}
