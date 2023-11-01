@@ -27,6 +27,11 @@ func (kc *KkContorollerImpl) GetKK() echo.HandlerFunc {
 					"messege": err.Error(),
 				})
 			}
+			if len(result) == 0 {
+				return c.JSON(http.StatusOK, map[string]any{
+					"messege": "there is no kk",
+				})
+			}
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
 				"data":    result,
