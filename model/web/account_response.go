@@ -1,12 +1,27 @@
 package web
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type AccountResponse struct {
 	*gorm.Model
 
-	Email    string `json:"email" form:"email"`
-	Nama     string `json:"nama" form:"nama"`
-	Password string `json:"password" form:"password"`
-	Role     string `json:"role" form:"role"`
+	Email    string
+	Name     string
+	Password string
+	Role     string
+}
+
+type CreateAccountResponse struct {
+	*gorm.Model
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
+	Email     string
+	Name      string
+	Role      string
 }
