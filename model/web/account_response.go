@@ -9,10 +9,13 @@ import (
 type AccountResponse struct {
 	*gorm.Model
 
-	Email    string
-	Name     string
-	Password string
-	Role     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
+	Email     string
+	Name      string
+	Password  string
+	Role      string
 }
 
 type CreateAccountResponse struct {
