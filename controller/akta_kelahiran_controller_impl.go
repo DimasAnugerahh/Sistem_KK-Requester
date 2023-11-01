@@ -23,7 +23,6 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := helper.Authorization(c)
 		fileheader := "file_Akta_kelahiran"
-
 		AktaKelahiran := &domain.AktaKelahiran{}
 		err := c.Bind(AktaKelahiran)
 
@@ -50,15 +49,16 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 
 		request.Request_kk_id = idRequest
 
-		aktaKelahiran, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
+		AktaKelahiranResult, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": err.Error(),
 			})
 		}
+
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    aktaKelahiran,
+			"data":    AktaKelahiranResult,
 		})
 	}
 
