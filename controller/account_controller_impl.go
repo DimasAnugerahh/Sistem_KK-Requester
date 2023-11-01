@@ -25,9 +25,9 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		_, role := helper.Authorization(c)
 		if role == "admin" {
-			response, err := uc.AccountService.GetAllAccounts(c)
+			Result, err := uc.AccountService.GetAllAccounts(c)
 
-			if response == nil {
+			if len(Result) == 0 {
 				return c.JSON(http.StatusOK, echo.Map{
 					"message": "there is no account",
 				})
@@ -35,13 +35,13 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 
 			if err != nil {
 				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": err,
+					"message": err.Error(),
 				})
 			}
 
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
-				"data":    response,
+				"data":    Result,
 			})
 		}
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Unauthorized"})
@@ -55,19 +55,19 @@ func (uc *AccountControllerImpl) GetAccounts() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := helper.Authorization(c)
 
-		response, err := uc.AccountService.GetAccounts(c, int(id))
+		Result, err := uc.AccountService.GetAccounts(c, int(id))
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
+				"message": err.Error(),
 			})
 		}
 
-		accountResponse := web.AccountResponse{Email: response.Email, Nama: response.Name, Password: response.Password, Role: response.Role}
+		response := web.AccountResponse{Email: Result.Email, Name: Result.Name, Password: Result.Password, Role: Result.Role}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    accountResponse,
+			"data":    response,
 		})
 	}
 
@@ -80,21 +80,22 @@ func (uc *AccountControllerImpl) CreateAccount() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
+				"message": err.Error(),
 			})
 		}
 
-		response, err := uc.AccountService.CreateAccount(c, Account)
+		result, err := uc.AccountService.CreateAccount(c, Account)
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
-			})
+				"message": err.Error()})
 		}
+
+		Result := web.CreateAccountResponse{CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Email: result.Email, Name: result.Name, Role: result.Role, Model: result.Model}
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    response,
+			"data":    Result,
 		})
 	}
 }
@@ -107,12 +108,11 @@ func (uc *AccountControllerImpl) AccountLogin() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
-			})
+				"message": err.Error()})
 		}
 
-		response, err := uc.AccountService.AccountLogin(c, Account)
-		if response == nil {
+		Result, err := uc.AccountService.AccountLogin(c, Account)
+		if Result == nil {
 			return c.JSON(http.StatusUnauthorized, echo.Map{
 				"message": "account not found",
 			})
@@ -120,22 +120,20 @@ func (uc *AccountControllerImpl) AccountLogin() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
-			})
+				"message": err.Error()})
 		}
 
-		token, err := helper.GenerateToken(Account, int(response.ID), response.Role, response.Email)
+		token, err := helper.GenerateToken(Account, int(Result.ID), Result.Role, Result.Email)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err,
-			})
+				"message": err.Error()})
 		}
 
-		AccountResponse := web.LoginResponse{Email: response.Email, Nama: response.Name, Role: response.Role, Token: token}
+		AccountResult := web.LoginResponse{Email: Result.Email, Nama: Result.Name, Role: Result.Role, Token: token}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    AccountResponse,
+			"data":    AccountResult,
 		})
 	}
 }
@@ -153,13 +151,13 @@ func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
 			})
 		}
 
-		response, _ := uc.AccountService.AccountUpdate(c, updateRequest, id)
+		Result, _ := uc.AccountService.AccountUpdate(c, updateRequest, id)
 
-		updateAccountResponse := web.AccountResponse{Email: response.Email, Nama: response.Name, Password: response.Password, Role: response.Role}
+		updateAccountResult := web.AccountResponse{Email: Result.Email, Name: Result.Name, Password: Result.Password, Role: Result.Role}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    updateAccountResponse,
+			"data":    updateAccountResult,
 		})
 
 	}

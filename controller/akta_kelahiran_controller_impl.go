@@ -3,6 +3,7 @@ package controller
 import (
 	"kk-requester/helper"
 	"kk-requester/model/domain"
+	"kk-requester/model/web"
 	"kk-requester/service"
 	"log"
 	"net/http"
@@ -28,7 +29,7 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind data",
+				"message": err.Error(),
 			})
 		}
 
@@ -43,22 +44,24 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind request data",
+				"message": err.Error(),
 			})
 		}
 
 		request.Request_kk_id = idRequest
 
-		AktaKelahiranResult, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
+		result, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": err.Error(),
 			})
 		}
 
+		response := web.AktaKelahiranResponse{CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Nama_lengkap: result.Nama_lengkap, AccountId: result.AccountId, File_Akta_kelahiran: result.File_Akta_kelahiran}
+
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    AktaKelahiranResult,
+			"data":    response,
 		})
 	}
 
@@ -89,9 +92,11 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 
 		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, updateRequest, id, uint(accountId))
 
+		response := web.AktaKelahiranResponse{CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Nama_lengkap: result.Nama_lengkap, AccountId: result.AccountId, File_Akta_kelahiran: result.File_Akta_kelahiran}
+
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }
@@ -100,6 +105,12 @@ func (kc *AktaKelahiranControllerImpl) GetAktaKelahiran() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		accountId, _ := helper.Authorization(c)
 		result, err := kc.AktaKelahiranService.GetAktaKelahiran(c, uint(accountId))
+
+		if len(result) == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"messege": "there is no akta kelahiran",
+			})
+		}
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
