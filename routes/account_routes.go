@@ -9,19 +9,19 @@ import (
 )
 
 func NewAccountRoutes(e *echo.Echo, controller controller.AccountController) {
-	AccountGroup := e.Group("")
+	AccountGroup := e.Group("/accounts")
 
 	AccountGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	AccountGroup.GET("/accounts", (controller.GetAllAccounts()))
-	AccountGroup.GET("/accounts/me", (controller.GetAccounts()))
+	AccountGroup.GET("", (controller.GetAllAccounts()))
+	AccountGroup.GET("/me", (controller.GetAccounts()))
 
-	AccountGroup.PUT("/accounts", (controller.AccountUpdate()))
+	AccountGroup.PUT("", (controller.AccountUpdate()))
 
-	AccountGroup.DELETE("/accounts/:id", (controller.AccountDelete()))
-	AccountGroup.DELETE("/accounts", (controller.AccountDelete()))
+	AccountGroup.DELETE("/:id", (controller.AccountDelete()))
+	AccountGroup.DELETE("", (controller.AccountDelete()))
 
 	e.POST("/accounts", controller.CreateAccount())
 	e.POST("/accounts/login", controller.AccountLogin())

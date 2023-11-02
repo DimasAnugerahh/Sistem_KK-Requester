@@ -9,14 +9,14 @@ import (
 )
 
 func NewKTPRoutes(e *echo.Echo, controller controller.KTPController) {
-	KTPGroup := e.Group("")
+	KTPGroup := e.Group("/ktps")
 
 	KTPGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	KTPGroup.POST("/requests/:id/ktps", (controller.CreateKTP()))
-	KTPGroup.GET("/ktps", (controller.GetKTP()))
-	KTPGroup.PUT("/ktps/:id", (controller.KTPUpdate()))
+	KTPGroup.POST("/requests/:id", (controller.CreateKTP()))
+	KTPGroup.GET("", (controller.GetKTP()))
+	KTPGroup.PUT("/:id", (controller.KTPUpdate()))
 
 }
