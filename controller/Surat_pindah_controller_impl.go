@@ -3,6 +3,7 @@ package controller
 import (
 	"kk-requester/helper"
 	"kk-requester/model/domain"
+	"kk-requester/model/web"
 	"kk-requester/service"
 	"log"
 	"net/http"
@@ -43,7 +44,7 @@ func (kc *SuratPindahControllerImpl) CreateSuratPindah() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind request data",
+				"message": err.Error(),
 			})
 		}
 
@@ -53,13 +54,14 @@ func (kc *SuratPindahControllerImpl) CreateSuratPindah() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "error creating SuratPindah",
+				"message": err.Error(),
 			})
 		}
+		response := web.DocumentResponse{Id: result.ID, CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, AccountId: result.AccountId, Nama: result.Nama_lengkap, File: result.File_surat_pindah}
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }
@@ -73,7 +75,7 @@ func (kc *SuratPindahControllerImpl) SuratPindahUpdate() echo.HandlerFunc {
 
 		id, err := strconv.ParseFloat(idParam, 64)
 		if err != nil {
-			log.Fatal("Gagal convert id")
+			log.Fatal("Gagal convert id", err.Error())
 		}
 
 		updateRequest := domain.SuratPindah{}
@@ -85,6 +87,7 @@ func (kc *SuratPindahControllerImpl) SuratPindahUpdate() echo.HandlerFunc {
 		}
 
 		updateRequest.File_surat_pindah = helper.CloudinaryUpdload(c, fileheader)
+		updateRequest.AccountId = uint(accountId)
 
 		result, _ := kc.SuratPindahService.SuratPindahUpdate(c, &updateRequest, id, uint(accountId))
 		result.AccountId = uint(accountId)
@@ -106,9 +109,29 @@ func (kc *SuratPindahControllerImpl) GetSuratPindah() echo.HandlerFunc {
 			})
 		}
 
+		if len(result) == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"messege": "there is no surat pindah",
+			})
+		}
+
+		response := []web.DocumentResponse{}
+		for idx := range result {
+			response = append(response,
+				web.DocumentResponse{
+					Id:        result[idx].ID,
+					Nama:      result[idx].Nama_lengkap,
+					CreatedAt: result[idx].CreatedAt,
+					UpdatedAt: result[idx].UpdatedAt,
+					DeletedAt: result[idx].DeletedAt.Time,
+					AccountId: result[idx].AccountId,
+					File:      result[idx].File_surat_pindah,
+				})
+		}
+
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }

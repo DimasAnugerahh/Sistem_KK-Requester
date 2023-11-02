@@ -32,6 +32,7 @@ func (kc *KkContorollerImpl) GetKK() echo.HandlerFunc {
 					"messege": "there is no kk",
 				})
 			}
+
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
 				"data":    result,
@@ -54,7 +55,7 @@ func (kc *KkContorollerImpl) CreateKK() echo.HandlerFunc {
 
 			if err != nil {
 				return c.JSON(http.StatusBadRequest, echo.Map{
-					"message": "failed bind request data",
+					"message": err.Error(),
 				})
 			}
 

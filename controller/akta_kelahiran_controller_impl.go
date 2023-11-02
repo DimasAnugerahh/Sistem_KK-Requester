@@ -23,7 +23,7 @@ func NewAktaKelahiranController(ks service.AktaKelahiranService) *AktaKelahiranC
 func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := helper.Authorization(c)
-		fileheader := "file_Akta_kelahiran"
+		fileheader := "file_akta_kelahiran"
 		AktaKelahiran := &domain.AktaKelahiran{}
 		err := c.Bind(AktaKelahiran)
 
@@ -57,7 +57,7 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 			})
 		}
 
-		response := web.AktaKelahiranResponse{CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Nama_lengkap: result.Nama_lengkap, AccountId: result.AccountId, File_Akta_kelahiran: result.File_Akta_kelahiran}
+		response := web.DocumentResponse{Id: result.ID, CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Nama: result.Nama_lengkap, AccountId: result.AccountId, File: result.File_Akta_kelahiran}
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
@@ -71,7 +71,7 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		accountId, _ := helper.Authorization(c)
-		fileheader := "file_Akta_kelahiran"
+		fileheader := "file_akta_kelahiran"
 
 		idParam := c.Param("id")
 
@@ -89,10 +89,10 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 		}
 
 		updateRequest.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
+		updateRequest.AccountId = uint(accountId)
 
 		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, updateRequest, id, uint(accountId))
-
-		response := web.AktaKelahiranResponse{CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Nama_lengkap: result.Nama_lengkap, AccountId: result.AccountId, File_Akta_kelahiran: result.File_Akta_kelahiran}
+		response := web.DocumentResponse{CreatedAt: result.CreatedAt, Nama: result.Nama_lengkap, AccountId: result.AccountId, File: result.File_Akta_kelahiran}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
@@ -116,9 +116,23 @@ func (kc *AktaKelahiranControllerImpl) GetAktaKelahiran() echo.HandlerFunc {
 				"messege": err.Error(),
 			})
 		}
+		response := []web.DocumentResponse{}
+
+		for idx := range result {
+			response = append(response, web.DocumentResponse{
+				Id:        result[idx].ID,
+				CreatedAt: result[idx].CreatedAt,
+				UpdatedAt: result[idx].UpdatedAt,
+				DeletedAt: result[idx].DeletedAt.Time,
+				Nama:      result[idx].Nama_lengkap,
+				AccountId: result[idx].AccountId,
+				File:      result[idx].File_Akta_kelahiran,
+			})
+
+		}
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }
