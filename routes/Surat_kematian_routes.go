@@ -15,8 +15,8 @@ func NewAktaKematianRoutes(e *echo.Echo, controller controller.AktaKematianContr
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	AktaKematianGroup.POST("/requests/:id/aktakematian", (controller.CreateAktaKematian()))
-	AktaKematianGroup.GET("/aktakematian", (controller.GetAktaKematian()))
-	AktaKematianGroup.PUT("/aktakematian/:id", (controller.AktaKematianUpdate()))
+	AktaKematianGroup.POST("/requests/:id/akta-kematian", (controller.CreateAktaKematian()))
+	AktaKematianGroup.GET("/akta-kematians", (controller.GetAktaKematian()))
+	AktaKematianGroup.PUT("/akta-kematians/:id", (controller.AktaKematianUpdate()))
 
 }

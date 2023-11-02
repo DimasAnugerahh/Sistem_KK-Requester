@@ -15,8 +15,8 @@ func NewKTPRoutes(e *echo.Echo, controller controller.KTPController) {
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	KTPGroup.POST("/requests/:id/ktp", (controller.CreateKTP()))
-	KTPGroup.GET("/ktp", (controller.GetKTP()))
-	KTPGroup.PUT("/ktp/:id", (controller.KTPUpdate()))
+	KTPGroup.POST("/requests/:id/ktps", (controller.CreateKTP()))
+	KTPGroup.GET("/ktps", (controller.GetKTP()))
+	KTPGroup.PUT("/ktps/:id", (controller.KTPUpdate()))
 
 }

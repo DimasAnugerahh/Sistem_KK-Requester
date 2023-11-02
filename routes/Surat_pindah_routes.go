@@ -15,8 +15,8 @@ func NewSuratPindahRoutes(e *echo.Echo, controller controller.SuratPindahControl
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	SuratPindahGroup.POST("/requests/:id/suratpindah", (controller.CreateSuratPindah()))
-	SuratPindahGroup.GET("/suratpindah", (controller.GetSuratPindah()))
-	SuratPindahGroup.PUT("/suratpindah/:id", (controller.SuratPindahUpdate()))
+	SuratPindahGroup.POST("/requests/:id/surat-pindahs", (controller.CreateSuratPindah()))
+	SuratPindahGroup.GET("/surat-pindahs", (controller.GetSuratPindah()))
+	SuratPindahGroup.PUT("/surat-pindahs/:id", (controller.SuratPindahUpdate()))
 
 }

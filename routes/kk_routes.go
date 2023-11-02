@@ -15,6 +15,6 @@ func NewkkRoutes(e *echo.Echo, controller controller.KkController) {
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	kkGroup.POST("/kk", (controller.CreateKK()))
-	kkGroup.GET("/kk", (controller.GetKK()))
+	kkGroup.POST("/kks", (controller.CreateKK()))
+	kkGroup.GET("/kks", (controller.GetKK()))
 }
