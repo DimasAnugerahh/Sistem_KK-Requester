@@ -9,14 +9,14 @@ import (
 )
 
 func NewAktaKematianRoutes(e *echo.Echo, controller controller.AktaKematianController) {
-	AktaKematianGroup := e.Group("")
+	AktaKematianGroup := e.Group("/akta-kematians")
 
 	AktaKematianGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	AktaKematianGroup.POST("/requests/:id/aktakematian", (controller.CreateAktaKematian()))
-	AktaKematianGroup.GET("/aktakematian", (controller.GetAktaKematian()))
-	AktaKematianGroup.PUT("/aktakematian/:id", (controller.AktaKematianUpdate()))
+	AktaKematianGroup.POST("/requests/:id", (controller.CreateAktaKematian()))
+	AktaKematianGroup.GET("", (controller.GetAktaKematian()))
+	AktaKematianGroup.PUT("/:id", (controller.AktaKematianUpdate()))
 
 }

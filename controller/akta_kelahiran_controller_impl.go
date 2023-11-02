@@ -3,6 +3,7 @@ package controller
 import (
 	"kk-requester/helper"
 	"kk-requester/model/domain"
+	"kk-requester/model/web"
 	"kk-requester/service"
 	"log"
 	"net/http"
@@ -22,13 +23,13 @@ func NewAktaKelahiranController(ks service.AktaKelahiranService) *AktaKelahiranC
 func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := helper.Authorization(c)
-		fileheader := "file_Akta_kelahiran"
+		fileheader := "file_akta_kelahiran"
 		AktaKelahiran := &domain.AktaKelahiran{}
 		err := c.Bind(AktaKelahiran)
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind data",
+				"message": err.Error(),
 			})
 		}
 
@@ -43,22 +44,24 @@ func (kc *AktaKelahiranControllerImpl) CreateAktaKelahiran() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind request data",
+				"message": err.Error(),
 			})
 		}
 
 		request.Request_kk_id = idRequest
 
-		AktaKelahiranResult, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
+		result, _, err := kc.AktaKelahiranService.CreateAktaKelahiran(c, AktaKelahiran, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"message": err.Error(),
 			})
 		}
 
+		response := web.DocumentResponse{Id: result.ID, CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Nama: result.Nama_lengkap, AccountId: result.AccountId, File: result.File_Akta_kelahiran}
+
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    AktaKelahiranResult,
+			"data":    response,
 		})
 	}
 
@@ -68,7 +71,7 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		accountId, _ := helper.Authorization(c)
-		fileheader := "file_Akta_kelahiran"
+		fileheader := "file_akta_kelahiran"
 
 		idParam := c.Param("id")
 
@@ -86,12 +89,14 @@ func (kc *AktaKelahiranControllerImpl) AktaKelahiranUpdate() echo.HandlerFunc {
 		}
 
 		updateRequest.File_Akta_kelahiran = helper.CloudinaryUpdload(c, fileheader)
+		updateRequest.AccountId = uint(accountId)
 
 		result, _ := kc.AktaKelahiranService.AktaKelahiranUpdate(c, updateRequest, id, uint(accountId))
+		response := web.DocumentResponse{CreatedAt: result.CreatedAt, Nama: result.Nama_lengkap, AccountId: result.AccountId, File: result.File_Akta_kelahiran}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }
@@ -100,14 +105,34 @@ func (kc *AktaKelahiranControllerImpl) GetAktaKelahiran() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		accountId, _ := helper.Authorization(c)
 		result, err := kc.AktaKelahiranService.GetAktaKelahiran(c, uint(accountId))
+
+		if len(result) == 0 {
+			return c.JSON(http.StatusOK, map[string]any{
+				"messege": "there is no akta kelahiran",
+			})
+		}
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
 			})
 		}
+		response := []web.DocumentResponse{}
+
+		for idx := range result {
+			response = append(response, web.DocumentResponse{
+				Id:        result[idx].ID,
+				CreatedAt: result[idx].CreatedAt,
+				UpdatedAt: result[idx].UpdatedAt,
+				DeletedAt: result[idx].DeletedAt.Time,
+				Nama:      result[idx].Nama_lengkap,
+				AccountId: result[idx].AccountId,
+				File:      result[idx].File_Akta_kelahiran,
+			})
+
+		}
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }

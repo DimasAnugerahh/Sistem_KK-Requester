@@ -9,14 +9,14 @@ import (
 )
 
 func NewSuratPindahRoutes(e *echo.Echo, controller controller.SuratPindahController) {
-	SuratPindahGroup := e.Group("")
+	SuratPindahGroup := e.Group("/surat-pindahs")
 
 	SuratPindahGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	SuratPindahGroup.POST("/requests/:id/suratpindah", (controller.CreateSuratPindah()))
-	SuratPindahGroup.GET("/suratpindah", (controller.GetSuratPindah()))
-	SuratPindahGroup.PUT("/suratpindah/:id", (controller.SuratPindahUpdate()))
+	SuratPindahGroup.POST("/requests/:id", (controller.CreateSuratPindah()))
+	SuratPindahGroup.GET("", (controller.GetSuratPindah()))
+	SuratPindahGroup.PUT("/:id", (controller.SuratPindahUpdate()))
 
 }

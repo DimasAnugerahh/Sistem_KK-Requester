@@ -3,6 +3,7 @@ package controller
 import (
 	"kk-requester/helper"
 	"kk-requester/model/domain"
+	"kk-requester/model/web"
 	"kk-requester/service"
 	"log"
 	"net/http"
@@ -28,7 +29,7 @@ func (kc *SuratNikahControllerImpl) CreateSuratNikah() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind data",
+				"message": err.Error(),
 			})
 		}
 
@@ -43,22 +44,23 @@ func (kc *SuratNikahControllerImpl) CreateSuratNikah() echo.HandlerFunc {
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "failed bind request data",
+				"message": err.Error(),
 			})
 		}
 
 		request.Request_kk_id = idRequest
 
-		suratNikah, _, err := kc.SuratNikahService.CreateSuratNikah(c, SuratNikah, request)
+		result, _, err := kc.SuratNikahService.CreateSuratNikah(c, SuratNikah, request)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "error creating SuratNikah",
+				"message": err.Error(),
 			})
 		}
+		response := web.DocumentResponse{Id: result.ID, CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, AccountId: result.AccountId, Nama: result.Nama_lengkap, File: result.File_surat_nikah}
 
 		return c.JSON(http.StatusCreated, echo.Map{
 			"message": "success",
-			"data":    suratNikah,
+			"data":    response,
 		})
 	}
 }
@@ -71,7 +73,7 @@ func (kc *SuratNikahControllerImpl) SuratNikahUpdate() echo.HandlerFunc {
 
 		id, err := strconv.ParseFloat(idParam, 64)
 		if err != nil {
-			log.Fatal("Gagal convert id")
+			log.Fatal("Gagal convert id", err.Error())
 		}
 
 		updateRequest := domain.SuratNikah{}
@@ -83,6 +85,7 @@ func (kc *SuratNikahControllerImpl) SuratNikahUpdate() echo.HandlerFunc {
 		}
 
 		updateRequest.File_surat_nikah = helper.CloudinaryUpdload(c, fileheader)
+		updateRequest.AccountId = uint(accountId)
 
 		result, _ := kc.SuratNikahService.SuratNikahUpdate(c, &updateRequest, id, uint(accountId))
 		result.AccountId = uint(accountId)
@@ -102,9 +105,30 @@ func (kc *SuratNikahControllerImpl) GetSuratNikah() echo.HandlerFunc {
 				"messege": err.Error(),
 			})
 		}
+
+		if len(result) == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"messege": "there is no surat nikah",
+			})
+		}
+
+		response := []web.DocumentResponse{}
+		for idx := range result {
+			response = append(response,
+				web.DocumentResponse{
+					Id:        result[idx].ID,
+					Nama:      result[idx].Nama_lengkap,
+					CreatedAt: result[idx].CreatedAt,
+					UpdatedAt: result[idx].UpdatedAt,
+					DeletedAt: result[idx].DeletedAt.Time,
+					AccountId: result[idx].AccountId,
+					File:      result[idx].File_surat_nikah,
+				})
+		}
+
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    result,
+			"data":    response,
 		})
 	}
 }

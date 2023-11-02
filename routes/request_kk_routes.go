@@ -15,10 +15,10 @@ func NewKKRequestRoutes(e *echo.Echo, controller controller.RequestKKController)
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}))
 
-	KKRequestGroup.POST("/KKRequest", (controller.CreateRequestKK()))
-	KKRequestGroup.GET("/KKRequest", (controller.GetRequestKK()))
-	KKRequestGroup.GET("/KKRequest/me", (controller.GetUserRequestKK()))
+	KKRequestGroup.POST("", (controller.CreateRequestKK()))
+	KKRequestGroup.GET("", (controller.GetRequestKK()))
+	KKRequestGroup.GET("/me", (controller.GetUserRequestKK()))
 
-	KKRequestGroup.PUT("/KKRequest/:id", (controller.RequestKKUpdate()))
+	KKRequestGroup.PUT("/:id", (controller.RequestKKUpdate()))
 
 }

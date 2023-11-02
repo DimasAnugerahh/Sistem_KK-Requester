@@ -30,7 +30,7 @@ func (kc *RequestKKControllerImpl) CreateRequestKK() echo.HandlerFunc {
 		result, err := kc.RequestKKService.CreateRequestKK(c, RequestKK)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": "error creating RequestKK",
+				"message": err.Error(),
 			})
 		}
 
@@ -57,7 +57,7 @@ func (kc *RequestKKControllerImpl) RequestKKUpdate() echo.HandlerFunc {
 			idParam := c.Param("id")
 			id, err := strconv.ParseFloat(idParam, 64)
 			if err != nil {
-				log.Fatal("Gagal convert id")
+				log.Fatal("Gagal convert id", err.Error())
 			}
 
 			updateRequest := &domain.RequestKK{}
@@ -115,6 +115,12 @@ func (kc *RequestKKControllerImpl) GetRequestKK() echo.HandlerFunc {
 				})
 			}
 
+			if len(result) == 0 {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"messege": "there is no request",
+				})
+			}
+
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
 				"data":    result,
@@ -156,6 +162,12 @@ func (kc *RequestKKControllerImpl) GetUserRequestKK() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": err.Error(),
+			})
+		}
+
+		if len(result) == 0 {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"messege": "there is no request",
 			})
 		}
 
