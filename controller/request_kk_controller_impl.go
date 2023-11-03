@@ -90,6 +90,7 @@ func (kc *RequestKKControllerImpl) GetRequestKK() echo.HandlerFunc {
 			page := 1
 			limit := 10
 			previousPage := page - 1
+			nextpages := page + 1
 
 			pageParam := c.QueryParam("page")
 			SortByParam := c.QueryParam("SortBy")
@@ -126,6 +127,9 @@ func (kc *RequestKKControllerImpl) GetRequestKK() echo.HandlerFunc {
 					"messege": "there is no request",
 				})
 			}
+			if page == totalPages {
+				nextpages = page
+			}
 
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
@@ -134,7 +138,7 @@ func (kc *RequestKKControllerImpl) GetRequestKK() echo.HandlerFunc {
 					{
 						"previousPage": previousPage,
 						"current_page": page,
-						"next_page":    page + 1,
+						"next_page":    nextpages,
 						"total_pages":  totalPages,
 					},
 				},
@@ -154,6 +158,7 @@ func (kc *RequestKKControllerImpl) GetUserRequestKK() echo.HandlerFunc {
 		page := 1
 		limit := 10
 		previousPage := page - 1
+		nextpages := page + 1
 
 		pageParam := c.QueryParam("page")
 		SortByParam := c.QueryParam("SortBy")
@@ -184,6 +189,10 @@ func (kc *RequestKKControllerImpl) GetUserRequestKK() echo.HandlerFunc {
 			})
 		}
 
+		if page == totalPages {
+			nextpages = page
+		}
+
 		if len(result) == 0 {
 			return c.JSON(http.StatusBadRequest, map[string]any{
 				"messege": "there is no request",
@@ -196,7 +205,7 @@ func (kc *RequestKKControllerImpl) GetUserRequestKK() echo.HandlerFunc {
 				{
 					"previousPage": previousPage,
 					"current_page": page,
-					"next_page":    page + 1,
+					"next_page":    nextpages,
 					"total_pages":  totalPages,
 				},
 			},
