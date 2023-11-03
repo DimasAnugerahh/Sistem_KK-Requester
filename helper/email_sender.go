@@ -25,8 +25,8 @@ func EmailSender(email_tujuan string, link_gambar string) {
 	htmlContent := `<html>
 			<body>
 				<h3>Halo, terima kasih telah menggunakan layanan ini</h3>
-				<p>Berikut link kartu keluarga anda</p>
-				<a href="` + link_gambar + `">Klik Untuk melihat</a>
+				<p>Berikut adalah kartu keluarga anda</p>
+				
 				<img src="` + link_gambar + `" alt="External Image">
 			</body>
 		</html>`
