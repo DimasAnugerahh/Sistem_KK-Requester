@@ -43,6 +43,7 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 
 			for idx := range Result {
 				response = append(response, web.AccountResponse{
+					Id:        Result[idx].ID,
 					CreatedAt: Result[idx].CreatedAt,
 					UpdatedAt: Result[idx].UpdatedAt,
 					DeletedAt: Result[idx].DeletedAt.Time,
@@ -77,7 +78,7 @@ func (uc *AccountControllerImpl) GetAccounts() echo.HandlerFunc {
 			})
 		}
 
-		response := web.AccountResponse{Email: Result.Email, Name: Result.Name, Password: Result.Password, Role: Result.Role}
+		response := web.AccountResponse{Id: uint(id), Email: Result.Email, Name: Result.Name, Password: Result.Password, Role: Result.Role}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
@@ -172,7 +173,7 @@ func (uc *AccountControllerImpl) AccountUpdate() echo.HandlerFunc {
 
 		Result, _ := uc.AccountService.AccountUpdate(c, updateRequest, id)
 
-		response := web.AccountResponse{Email: Result.Email, Name: Result.Name, Password: Result.Password, Role: Result.Role}
+		response := web.AccountResponse{Id: uint(id), Email: Result.Email, Name: Result.Name, Password: Result.Password, Role: Result.Role}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",

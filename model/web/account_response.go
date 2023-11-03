@@ -5,6 +5,7 @@ import (
 )
 
 type AccountResponse struct {
+	Id        uint
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time
