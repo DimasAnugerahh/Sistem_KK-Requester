@@ -28,22 +28,22 @@ func (service *RequestKKServiceImpl) CreateRequestKK(ctx echo.Context, NewkkRequ
 	return result, nil
 }
 
-func (service *RequestKKServiceImpl) GetUserRequestKK(ctx echo.Context, page int, limit int, sortby string, order string, accountId uint) ([]domain.RequestKK, error) {
-	result, err := service.RequestKKRepository.GetuserRequestKK(page, limit, sortby, order, accountId)
+func (service *RequestKKServiceImpl) GetUserRequestKK(ctx echo.Context, page int, limit int, sortby string, order string, accountId uint) ([]domain.RequestKK, int, error) {
+	result, totalPages, err := service.RequestKKRepository.GetuserRequestKK(page, limit, sortby, order, accountId)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR GET USERS: %s", err.Error())
+		return nil, 0, fmt.Errorf("ERROR GET USERS: %s", err.Error())
 	}
 
-	return result, nil
+	return result, totalPages, nil
 }
 
-func (service *RequestKKServiceImpl) GetRequestKK(ctx echo.Context, page int, limit int, sortby string, order string) ([]domain.RequestKK, error) {
-	result, err := service.RequestKKRepository.GetRequestKK(page, limit, sortby, order)
+func (service *RequestKKServiceImpl) GetRequestKK(ctx echo.Context, page int, limit int, sortby string, order string) ([]domain.RequestKK, int, error) {
+	result, totalPages, err := service.RequestKKRepository.GetRequestKK(page, limit, sortby, order)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR GET USERS: %s", err.Error())
+		return nil, 0, fmt.Errorf("ERROR GET USERS: %s", err.Error())
 	}
 
-	return result, nil
+	return result, totalPages, nil
 }
 
 func (service *RequestKKServiceImpl) RequestKKUpdate(ctx echo.Context, UpdatedRequestKK *domain.RequestKK, RequestKKId float64) (*domain.RequestKK, error) {
