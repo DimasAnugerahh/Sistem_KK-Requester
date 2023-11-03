@@ -98,19 +98,24 @@ func (uc *AccountControllerImpl) CreateAccount() echo.HandlerFunc {
 			})
 		}
 
-		result, err := uc.AccountService.CreateAccount(c, Account)
+		check, _ := uc.AccountService.AccountLogin(c, Account)
+		if check == nil {
+			_, err := uc.AccountService.CreateAccount(c, Account)
 
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, echo.Map{
-				"message": err.Error()})
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, echo.Map{
+					"message": err.Error()})
+			}
+
+			return c.JSON(http.StatusCreated, echo.Map{
+				"message": "sign up successfully",
+			})
 		}
 
-		response := web.AccountResponse{CreatedAt: result.CreatedAt, UpdatedAt: result.UpdatedAt, DeletedAt: result.DeletedAt.Time, Email: result.Email, Name: result.Name, Role: result.Role}
-
-		return c.JSON(http.StatusCreated, echo.Map{
-			"message": "success",
-			"data":    response,
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"message": "account is already used",
 		})
+
 	}
 }
 
