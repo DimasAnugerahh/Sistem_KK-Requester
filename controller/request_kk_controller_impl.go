@@ -70,9 +70,16 @@ func (kc *RequestKKControllerImpl) RequestKKUpdate() echo.HandlerFunc {
 
 			result, _ := kc.RequestKKService.RequestKKUpdate(c, updateRequest, id)
 
+			response := web.KKRequestResponse{
+				Id:                   result.ID,
+				AccountId:            result.AccountId,
+				StatusRequest:        result.StatusRequest,
+				StatusRequestMessage: result.StatusRequestMessage,
+			}
+
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
-				"data":    result,
+				"data":    response,
 			})
 		}
 		return c.JSON(http.StatusUnauthorized, echo.Map{
