@@ -9,7 +9,7 @@ import (
 )
 
 func NewKKRequestRoutes(e *echo.Echo, controller controller.RequestKKController) {
-	KKRequestGroup := e.Group("")
+	KKRequestGroup := e.Group("/requests")
 
 	KKRequestGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
