@@ -116,23 +116,10 @@ func (kc *AktaKelahiranControllerImpl) GetAktaKelahiran() echo.HandlerFunc {
 				"messege": err.Error(),
 			})
 		}
-		response := []web.DocumentResponse{}
 
-		for idx := range result {
-			response = append(response, web.DocumentResponse{
-				Id:        result[idx].ID,
-				CreatedAt: result[idx].CreatedAt,
-				UpdatedAt: result[idx].UpdatedAt,
-				DeletedAt: result[idx].DeletedAt.Time,
-				Nama:      result[idx].Nama_lengkap,
-				AccountId: result[idx].AccountId,
-				File:      result[idx].File_Akta_kelahiran,
-			})
-
-		}
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    response,
+			"data":    result,
 		})
 	}
 }

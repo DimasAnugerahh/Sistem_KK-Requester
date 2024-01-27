@@ -115,23 +115,9 @@ func (kc *KTPControllerImpl) GetKTP() echo.HandlerFunc {
 			})
 		}
 
-		response := []web.DocumentResponse{}
-		for idx := range result {
-			response = append(response,
-				web.DocumentResponse{
-					Id:        result[idx].ID,
-					Nama:      result[idx].Nama_lengkap,
-					CreatedAt: result[idx].CreatedAt,
-					UpdatedAt: result[idx].UpdatedAt,
-					DeletedAt: result[idx].DeletedAt.Time,
-					AccountId: result[idx].AccountId,
-					File:      result[idx].File_ktp,
-				})
-		}
-
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "success",
-			"data":    response,
+			"data":    result,
 		})
 	}
 }
