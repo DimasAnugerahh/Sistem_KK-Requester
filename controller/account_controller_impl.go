@@ -39,24 +39,9 @@ func (uc *AccountControllerImpl) GetAllAccounts() echo.HandlerFunc {
 				})
 			}
 
-			response := []web.AccountResponse{}
-
-			for idx := range Result {
-				response = append(response, web.AccountResponse{
-					Id:        Result[idx].ID,
-					CreatedAt: Result[idx].CreatedAt,
-					UpdatedAt: Result[idx].UpdatedAt,
-					DeletedAt: Result[idx].DeletedAt.Time,
-					Email:     Result[idx].Email,
-					Name:      Result[idx].Name,
-					Password:  Result[idx].Password,
-					Role:      Result[idx].Role,
-				})
-			}
-
 			return c.JSON(http.StatusOK, echo.Map{
 				"message": "success",
-				"data":    response,
+				"data":    Result,
 			})
 		}
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Unauthorized"})

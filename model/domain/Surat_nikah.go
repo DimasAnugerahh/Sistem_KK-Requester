@@ -8,7 +8,7 @@ type SuratNikah struct {
 	File_surat_nikah string       `json:"file_surat_nikah" form:"file_Surat_Nikah"`
 	Nama_lengkap     string       `json:"nama_lengkap" form:"nama_lengkap"`
 	AccountId        uint         `json:"account_id" form:"account_id"`
-	RequestKK        []*RequestKK `gorm:"many2many:req_detail_surat_nikahs;"`
+	RequestKK        []*RequestKK `gorm:"many2many:req_detail_surat_nikahs;" json:"omitempty"`
 }
 
 type ReqDetailSuratNikah struct {
