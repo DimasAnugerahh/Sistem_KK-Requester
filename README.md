@@ -4,7 +4,7 @@ KK-requester is a system used to connect residents who want to apply for a famil
 
 ## Tech stack
 
-- Code editor : Goland
+- Code editor : VsCode
 - Backend framework : GORM
 - ORM : GORM
 - API Deployment : AWS EC2
