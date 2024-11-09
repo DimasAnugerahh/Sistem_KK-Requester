@@ -8,7 +8,6 @@ KK-requester is a system used to connect residents who want to apply for a famil
 - Backend framework : GORM
 - ORM : GORM
 - API Deployment : AWS EC2
-- Database Deployment : Railway
 - Database : MySQL
 - Containerize : Docker
 - Mail Sender : Go-mail
